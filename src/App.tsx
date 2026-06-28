@@ -10,6 +10,7 @@ import WhyShopWithUs from './components/WhyShopWithUs';
 import CustomerReviews from './components/CustomerReviews';
 import InstagramGallery from './components/InstagramGallery';
 import Newsletter from './components/Newsletter';
+import Footer from './components/Footer';
 import SearchDrawer from './components/SearchDrawer';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
@@ -234,6 +235,9 @@ export default function App() {
 
       {/* Premium Newsletter Section */}
       <Newsletter goldStyle={goldStyle} />
+
+      {/* Premium Footer Section */}
+      <Footer goldStyle={goldStyle} />
 
       {/* Spacer representing actual page layout */}
       <div className="h-6" />
