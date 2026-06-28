@@ -8,6 +8,8 @@ interface Product {
   name: string;
   category: string;
   price: number;
+  originalPrice?: number;
+  badge?: 'NEW' | 'BEST SELLER' | 'LIMITED';
   image: string;
   rating: number;
   reviews: number;
@@ -30,6 +32,8 @@ const PRODUCTS: Product[] = [
     name: 'Maison Silk Slip Dress',
     category: 'Dresses',
     price: 890,
+    originalPrice: 1150,
+    badge: 'NEW',
     image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=600&auto=format&fit=crop',
     rating: 4.9,
     reviews: 24,
@@ -42,6 +46,7 @@ const PRODUCTS: Product[] = [
     name: 'Sovereign Cashmere Overcoat',
     category: 'Outerwear',
     price: 2450,
+    badge: 'LIMITED',
     image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=600&auto=format&fit=crop',
     rating: 5.0,
     reviews: 18,
@@ -54,6 +59,8 @@ const PRODUCTS: Product[] = [
     name: 'Monarch Linen Tailored Blazer',
     category: 'Suits & Blazers',
     price: 1250,
+    originalPrice: 1550,
+    badge: 'BEST SELLER',
     image: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=600&auto=format&fit=crop',
     rating: 4.8,
     reviews: 31,
@@ -66,6 +73,7 @@ const PRODUCTS: Product[] = [
     name: 'Signature Calfskin Chelsea Boots',
     category: 'Footwear',
     price: 950,
+    badge: 'NEW',
     image: 'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?q=80&w=600&auto=format&fit=crop',
     rating: 4.7,
     reviews: 14,
@@ -78,6 +86,7 @@ const PRODUCTS: Product[] = [
     name: '18K Aurelia Initial Signet Ring',
     category: 'Jewelry',
     price: 1800,
+    badge: 'LIMITED',
     image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600&auto=format&fit=crop',
     rating: 5.0,
     reviews: 9,
@@ -90,6 +99,8 @@ const PRODUCTS: Product[] = [
     name: 'Classic Gold Leaf Silk Scarf',
     category: 'Accessories',
     price: 380,
+    originalPrice: 480,
+    badge: 'BEST SELLER',
     image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop',
     rating: 4.9,
     reviews: 42,
@@ -102,6 +113,8 @@ const PRODUCTS: Product[] = [
     name: 'Empress Velvet Corset Gown',
     category: 'Dresses',
     price: 3100,
+    originalPrice: 3800,
+    badge: 'LIMITED',
     image: 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=600&auto=format&fit=crop',
     rating: 5.0,
     reviews: 8,
@@ -114,6 +127,7 @@ const PRODUCTS: Product[] = [
     name: 'Aurelia Monogram Leather Tote',
     category: 'Bags',
     price: 1650,
+    badge: 'NEW',
     image: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=600&auto=format&fit=crop',
     rating: 4.9,
     reviews: 19,
@@ -156,6 +170,49 @@ export default function FeaturedProducts({
     if (goldStyle === 'champagne') return 'bg-[#dfba73]/10 border-[#dfba73]/20';
     if (goldStyle === 'bright') return 'bg-[#ffd700]/10 border-[#ffd700]/20';
     return 'bg-[#c5a880]/10 border-[#c5a880]/20'; // classic
+  };
+
+  const getBadgeStyles = (badge?: 'NEW' | 'BEST SELLER' | 'LIMITED') => {
+    if (!badge) return { className: '', style: {} };
+    const isChampagne = goldStyle === 'champagne';
+    const isBright = goldStyle === 'bright';
+    const goldColor = isChampagne ? '#dfba73' : isBright ? '#ffd700' : '#c5a880';
+    
+    if (badge === 'NEW') {
+      return {
+        style: { borderColor: `${goldColor}40`, color: goldColor },
+        className: 'bg-black/90 backdrop-blur-md font-sans text-[7px] md:text-[8px] tracking-[0.25em] font-semibold border uppercase px-2 py-0.5 rounded-sm shadow-sm'
+      };
+    }
+    if (badge === 'LIMITED') {
+      return {
+        style: { borderColor: 'rgba(255,255,255,0.15)', color: '#ffffff' },
+        className: 'bg-black/95 backdrop-blur-md font-sans text-[7px] md:text-[8px] tracking-[0.25em] font-light border uppercase px-2 py-0.5 rounded-sm shadow-sm'
+      };
+    }
+    // BEST SELLER
+    return {
+      style: { backgroundColor: goldColor, color: '#000000' },
+      className: 'font-sans text-[7px] md:text-[8px] tracking-[0.25em] font-bold uppercase px-2 py-0.5 rounded-sm shadow-md'
+    };
+  };
+
+  const getCardHoverShadow = () => {
+    if (goldStyle === 'champagne') return 'hover:shadow-[0_20px_50px_rgba(223,186,115,0.14)] hover:border-[#dfba73]/30';
+    if (goldStyle === 'bright') return 'hover:shadow-[0_20px_50px_rgba(255,215,0,0.18)] hover:border-[#ffd700]/30';
+    return 'hover:shadow-[0_20px_50px_rgba(197,168,128,0.14)] hover:border-[#c5a880]/30'; // classic
+  };
+
+  const getButtonGlow = () => {
+    if (goldStyle === 'champagne') return 'hover:shadow-[0_0_15px_rgba(223,186,115,0.55)] hover:border-[#dfba73]';
+    if (goldStyle === 'bright') return 'hover:shadow-[0_0_15px_rgba(255,215,0,0.7)] hover:border-[#ffd700]';
+    return 'hover:shadow-[0_0_15px_rgba(197,168,128,0.55)] hover:border-[#c5a880]'; // classic
+  };
+
+  const getQuickViewGlow = () => {
+    if (goldStyle === 'champagne') return 'hover:shadow-[0_0_12px_rgba(223,186,115,0.35)] hover:border-[#dfba73]/50';
+    if (goldStyle === 'bright') return 'hover:shadow-[0_0_12px_rgba(255,215,0,0.5)] hover:border-[#ffd700]/50';
+    return 'hover:shadow-[0_0_12px_rgba(197,168,128,0.35)] hover:border-[#c5a880]/50'; // classic
   };
 
   const handleWishlistToggle = (prod: Product) => {
@@ -214,17 +271,17 @@ export default function FeaturedProducts({
 
         {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12">
-          {PRODUCTS.map((prod) => {
+          {PRODUCTS.map((prod, index) => {
             const isWishlisted = wishlistIds.includes(prod.id);
             return (
               <motion.div
                 id={`product-card-${prod.id}`}
                 key={prod.id}
-                initial={{ opacity: 0, y: 30 }}
+                initial={{ opacity: 0, y: 35 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.6 }}
-                className="group relative flex flex-col justify-between bg-neutral-950/20 border border-neutral-900/60 rounded-lg overflow-hidden hover:border-neutral-800 hover:shadow-[0_20px_50px_rgba(0,0,0,0.8)] transition-all duration-500 ease-out p-3"
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.7, delay: (index % 4) * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                className={`group relative flex flex-col justify-between bg-neutral-950/25 border border-neutral-900/60 rounded-lg overflow-hidden transition-all duration-500 ease-out p-3 hover:-translate-y-2 ${getCardHoverShadow()}`}
               >
                 {/* Image Container with Hover Actions */}
                 <div className="relative aspect-[3/4] overflow-hidden rounded bg-neutral-900 mb-4 group/img">
@@ -236,17 +293,30 @@ export default function FeaturedProducts({
                   />
                   
                   {/* Luxury Darkening Overlay */}
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors duration-500" />
+                  <div className="absolute inset-0 bg-black/15 group-hover:bg-black/45 transition-colors duration-500" />
 
                   {/* Top Tags & Wishlist Button */}
-                  <div className="absolute top-3 left-3 right-3 flex justify-between items-center z-10">
-                    <span className="bg-black/70 backdrop-blur-md border border-neutral-800 text-[8px] font-sans tracking-widest uppercase font-semibold text-neutral-300 px-2 py-1 rounded">
-                      {prod.category}
-                    </span>
+                  <div className="absolute top-3 left-3 right-3 flex justify-between items-start z-10">
+                    <div className="flex flex-col gap-1.5 items-start">
+                      <span className="bg-black/75 backdrop-blur-md border border-neutral-800/60 text-[7px] md:text-[8px] font-sans tracking-[0.15em] uppercase font-semibold text-neutral-300 px-2 py-0.5 rounded-sm shadow-sm">
+                        {prod.category}
+                      </span>
+                      {prod.badge && (() => {
+                        const bStyle = getBadgeStyles(prod.badge);
+                        return (
+                          <span
+                            className={`${bStyle.className}`}
+                            style={bStyle.style}
+                          >
+                            {prod.badge}
+                          </span>
+                        );
+                      })()}
+                    </div>
                     <button
                       id={`wishlist-toggle-${prod.id}`}
                       onClick={() => handleWishlistToggle(prod)}
-                      className={`p-2 rounded-full backdrop-blur-md border border-neutral-800/80 bg-black/50 hover:bg-black text-white hover:scale-110 active:scale-90 transition-all duration-300`}
+                      className="p-2 rounded-full backdrop-blur-md border border-neutral-800/80 bg-black/50 hover:bg-black text-white hover:scale-110 active:scale-90 transition-all duration-300"
                       aria-label={isWishlisted ? 'Remove from wishlist' : 'Add to wishlist'}
                     >
                       <Heart
@@ -263,7 +333,7 @@ export default function FeaturedProducts({
                     <button
                       id={`quick-view-btn-${prod.id}`}
                       onClick={() => openQuickView(prod)}
-                      className="w-full py-2.5 bg-black/80 hover:bg-black border border-neutral-850 hover:border-neutral-700 backdrop-blur-md rounded-sm text-[10px] font-sans font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer"
+                      className={`w-full py-2.5 bg-black/80 hover:bg-black border border-neutral-850 backdrop-blur-md rounded-sm text-[10px] font-sans font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer ${getQuickViewGlow()}`}
                     >
                       <Eye className="w-3.5 h-3.5" />
                       Quick View
@@ -273,7 +343,7 @@ export default function FeaturedProducts({
                     <button
                       id={`add-to-cart-btn-${prod.id}`}
                       onClick={() => handleQuickAdd(prod)}
-                      className={`w-full py-2.5 rounded-sm text-[10px] font-sans font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer ${getGoldBg()}`}
+                      className={`w-full py-2.5 rounded-sm text-[10px] font-sans font-bold tracking-[0.2em] uppercase flex items-center justify-center gap-1.5 transition-all duration-300 cursor-pointer ${getGoldBg()} ${getButtonGlow()}`}
                     >
                       <ShoppingBag className="w-3.5 h-3.5" />
                       {addedItemNotify === prod.id ? 'Added to Bag' : 'Add to Cart'}
@@ -307,9 +377,16 @@ export default function FeaturedProducts({
                     <h3 className="font-serif text-sm tracking-wide text-neutral-200 group-hover:text-white transition-colors line-clamp-1">
                       {prod.name}
                     </h3>
-                    <span className={`font-sans text-xs font-semibold shrink-0 ${getGoldColor()}`}>
-                      ${prod.price.toLocaleString()}
-                    </span>
+                    <div className="flex flex-col items-end shrink-0">
+                      {prod.originalPrice && (
+                        <span className="font-sans text-[10px] text-neutral-500 line-through">
+                          ${prod.originalPrice.toLocaleString()}
+                        </span>
+                      )}
+                      <span className={`font-sans text-xs font-semibold ${getGoldColor()}`}>
+                        ${prod.price.toLocaleString()}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -365,18 +442,38 @@ export default function FeaturedProducts({
               {/* Right Side: Product Customization & Specs */}
               <div className="flex-1 p-6 md:p-8 overflow-y-auto flex flex-col justify-between space-y-6">
                 <div>
-                  <span className="font-sans text-[10px] tracking-[0.25em] text-neutral-500 uppercase font-semibold">
-                    {selectedProduct.category}
-                  </span>
-                  <h3 className="font-serif text-2xl md:text-3xl tracking-wide text-white font-normal mt-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="font-sans text-[10px] tracking-[0.25em] text-neutral-500 uppercase font-semibold">
+                      {selectedProduct.category}
+                    </span>
+                    {selectedProduct.badge && (() => {
+                      const bStyle = getBadgeStyles(selectedProduct.badge);
+                      return (
+                        <span
+                          className={`${bStyle.className} text-[7px] py-0.5 px-1.5`}
+                          style={bStyle.style}
+                        >
+                          {selectedProduct.badge}
+                        </span>
+                      );
+                    })()}
+                  </div>
+                  <h3 className="font-serif text-2xl md:text-3xl tracking-wide text-white font-normal mt-2 mt-1">
                     {selectedProduct.name}
                   </h3>
                   
                   {/* Price & Rating */}
                   <div className="flex items-center gap-4 mt-3">
-                    <span className={`font-sans text-xl font-semibold ${getGoldColor()}`}>
-                      ${selectedProduct.price.toLocaleString()}
-                    </span>
+                    <div className="flex items-baseline gap-2">
+                      {selectedProduct.originalPrice && (
+                        <span className="font-sans text-sm text-neutral-500 line-through">
+                          ${selectedProduct.originalPrice.toLocaleString()}
+                        </span>
+                      )}
+                      <span className={`font-sans text-xl font-semibold ${getGoldColor()}`}>
+                        ${selectedProduct.price.toLocaleString()}
+                      </span>
+                    </div>
                     <div className="w-[1px] h-4 bg-neutral-800" />
                     <div className="flex items-center gap-1.5">
                       <div className="flex items-center text-amber-500">
@@ -451,7 +548,7 @@ export default function FeaturedProducts({
                         });
                         setSelectedProduct(null);
                       }}
-                      className={`flex-1 py-3.5 rounded-sm font-sans font-bold text-xs tracking-[0.25em] uppercase flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${getGoldBg()}`}
+                      className={`flex-1 py-3.5 rounded-sm font-sans font-bold text-xs tracking-[0.25em] uppercase flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${getGoldBg()} ${getButtonGlow()}`}
                     >
                       <ShoppingBag className="w-4 h-4" />
                       Add to Shopping Bag
@@ -462,7 +559,7 @@ export default function FeaturedProducts({
                       onClick={() => {
                         handleWishlistToggle(selectedProduct);
                       }}
-                      className={`px-4 py-3 border border-neutral-900 bg-neutral-950 hover:border-neutral-700 rounded-sm flex items-center justify-center transition-all duration-300 cursor-pointer`}
+                      className="px-4 py-3 border border-neutral-900 bg-neutral-950 hover:border-neutral-700 rounded-sm flex items-center justify-center transition-all duration-300 cursor-pointer"
                       aria-label="Add to wishlist"
                     >
                       <Heart
