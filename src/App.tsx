@@ -4,6 +4,7 @@ import AnnouncementBar from './components/AnnouncementBar';
 import LuxuryNavbar from './components/LuxuryNavbar';
 import HeroSection from './components/HeroSection';
 import FeaturedProducts from './components/FeaturedProducts';
+import WhyShopWithUs from './components/WhyShopWithUs';
 import SearchDrawer from './components/SearchDrawer';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
@@ -204,6 +205,9 @@ export default function App() {
         onAddToWishlist={handleAddToWishlist}
         onRemoveFromWishlist={handleRemoveFromWishlist}
       />
+
+      {/* Why Shop With Us Section */}
+      <WhyShopWithUs goldStyle={goldStyle} />
 
       {/* Spacer representing actual page layout */}
       <div className="h-6" />
