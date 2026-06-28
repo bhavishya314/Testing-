@@ -3,6 +3,7 @@ import { NavbarTheme, GoldStyle, LogoAlign, HighlightStyle, CartItem, WishlistIt
 import AnnouncementBar from './components/AnnouncementBar';
 import LuxuryNavbar from './components/LuxuryNavbar';
 import HeroSection from './components/HeroSection';
+import FeaturedProducts from './components/FeaturedProducts';
 import SearchDrawer from './components/SearchDrawer';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
@@ -190,9 +191,18 @@ export default function App() {
         goldStyle={goldStyle}
         onShopClick={() => setIsCartOpen(true)}
         onExploreClick={() => {
-          const stage = document.getElementById('interactive-stage');
-          stage?.scrollIntoView({ behavior: 'smooth' });
+          const featured = document.getElementById('featured-products-section');
+          featured?.scrollIntoView({ behavior: 'smooth' });
         }}
+      />
+
+      {/* 4. Featured Couture Products Section */}
+      <FeaturedProducts
+        goldStyle={goldStyle}
+        wishlistIds={wishlist.map((item) => item.id)}
+        onAddToCart={handleAddToCart}
+        onAddToWishlist={handleAddToWishlist}
+        onRemoveFromWishlist={handleRemoveFromWishlist}
       />
 
       {/* Spacer representing actual page layout */}
