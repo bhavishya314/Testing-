@@ -4,6 +4,7 @@ import AnnouncementBar from './components/AnnouncementBar';
 import LuxuryNavbar from './components/LuxuryNavbar';
 import HeroSection from './components/HeroSection';
 import FeaturedProducts from './components/FeaturedProducts';
+import ShopByCategory from './components/ShopByCategory';
 import WhyShopWithUs from './components/WhyShopWithUs';
 import SearchDrawer from './components/SearchDrawer';
 import CartDrawer from './components/CartDrawer';
@@ -205,6 +206,9 @@ export default function App() {
         onAddToWishlist={handleAddToWishlist}
         onRemoveFromWishlist={handleRemoveFromWishlist}
       />
+
+      {/* 5. Shop By Category Section */}
+      <ShopByCategory goldStyle={goldStyle} />
 
       {/* Why Shop With Us Section */}
       <WhyShopWithUs goldStyle={goldStyle} />
