@@ -269,7 +269,7 @@ export default function InteractiveShowcase({
                   className="p-2.5 rounded border border-neutral-900 bg-neutral-950 hover:bg-neutral-900/40 text-left hover:border-neutral-800 transition-all duration-300 group relative"
                 >
                   <div className="w-full h-16 rounded overflow-hidden mb-2 bg-neutral-900 relative">
-                    <img src={item.image} alt={item.name} referrerPolicy="no-referrer" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                    <img src={item.image} alt={item.name} referrerPolicy="no-referrer" loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                   </div>
                   <h5 className="font-serif text-[10px] tracking-wide text-neutral-300 group-hover:text-white truncate block">
                     {item.name}
@@ -321,6 +321,8 @@ export default function InteractiveShowcase({
               src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=600&auto=format&fit=crop"
               alt="Maison Aurelia Editorial"
               referrerPolicy="no-referrer"
+              loading="lazy"
+              decoding="async"
               className="absolute inset-0 w-full h-full object-cover opacity-35 filter grayscale contrast-125 group-hover:scale-105 transition-transform duration-700 ease-out"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40" />

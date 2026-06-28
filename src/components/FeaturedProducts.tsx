@@ -289,6 +289,8 @@ export default function FeaturedProducts({
                     src={prod.image}
                     alt={prod.name}
                     referrerPolicy="no-referrer"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                   />
                   
@@ -434,6 +436,8 @@ export default function FeaturedProducts({
                   src={selectedProduct.image}
                   alt={selectedProduct.name}
                   referrerPolicy="no-referrer"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#0e0e0e] via-transparent to-transparent md:bg-gradient-to-r md:from-transparent md:via-transparent md:to-[#0e0e0e]/20" />

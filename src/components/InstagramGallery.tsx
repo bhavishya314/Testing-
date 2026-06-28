@@ -152,6 +152,8 @@ export default function InstagramGallery({ goldStyle }: InstagramGalleryProps) {
                   src={post.image}
                   alt={`AURELIA Instagram Post ${post.id}`}
                   referrerPolicy="no-referrer"
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 filter brightness-[0.8] group-hover:brightness-[0.4]"
                 />
 

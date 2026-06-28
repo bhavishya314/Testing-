@@ -223,6 +223,8 @@ export default function CustomerReviews({ goldStyle }: CustomerReviewsProps) {
                       src={rev.photo}
                       alt={rev.name}
                       referrerPolicy="no-referrer"
+                      loading="lazy"
+                      decoding="async"
                       className="w-10 h-10 rounded-full object-cover border border-neutral-900 filter grayscale brightness-95"
                     />
                     <div>
@@ -292,6 +294,8 @@ export default function CustomerReviews({ goldStyle }: CustomerReviewsProps) {
                             src={rev.photo}
                             alt={rev.name}
                             referrerPolicy="no-referrer"
+                            loading="lazy"
+                            decoding="async"
                             className="w-8 h-8 rounded-full object-cover border border-neutral-900 grayscale"
                           />
                           <div>
