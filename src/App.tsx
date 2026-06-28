@@ -5,6 +5,7 @@ import LuxuryNavbar from './components/LuxuryNavbar';
 import HeroSection from './components/HeroSection';
 import FeaturedProducts from './components/FeaturedProducts';
 import ShopByCategory from './components/ShopByCategory';
+import NewArrivals from './components/NewArrivals';
 import WhyShopWithUs from './components/WhyShopWithUs';
 import SearchDrawer from './components/SearchDrawer';
 import CartDrawer from './components/CartDrawer';
@@ -200,6 +201,15 @@ export default function App() {
 
       {/* 4. Featured Couture Products Section */}
       <FeaturedProducts
+        goldStyle={goldStyle}
+        wishlistIds={wishlist.map((item) => item.id)}
+        onAddToCart={handleAddToCart}
+        onAddToWishlist={handleAddToWishlist}
+        onRemoveFromWishlist={handleRemoveFromWishlist}
+      />
+
+      {/* New Arrivals Section */}
+      <NewArrivals
         goldStyle={goldStyle}
         wishlistIds={wishlist.map((item) => item.id)}
         onAddToCart={handleAddToCart}
