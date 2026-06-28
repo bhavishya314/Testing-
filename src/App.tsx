@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavbarTheme, GoldStyle, LogoAlign, HighlightStyle, CartItem, WishlistItem } from './types';
 import AnnouncementBar from './components/AnnouncementBar';
 import LuxuryNavbar from './components/LuxuryNavbar';
+import HeroSection from './components/HeroSection';
 import SearchDrawer from './components/SearchDrawer';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
@@ -184,10 +185,20 @@ export default function App() {
         onOpenWishlist={() => setIsWishlistOpen(true)}
       />
 
+      {/* 3. Luxury Premium Full-screen Hero Section */}
+      <HeroSection
+        goldStyle={goldStyle}
+        onShopClick={() => setIsCartOpen(true)}
+        onExploreClick={() => {
+          const stage = document.getElementById('interactive-stage');
+          stage?.scrollIntoView({ behavior: 'smooth' });
+        }}
+      />
+
       {/* Spacer representing actual page layout */}
       <div className="h-6" />
 
-      {/* 3. Interactive Showcase Studio */}
+      {/* 4. Interactive Showcase Studio */}
       <InteractiveShowcase
         theme={theme}
         setTheme={setTheme}
