@@ -8,6 +8,7 @@ import ShopByCategory from './components/ShopByCategory';
 import NewArrivals from './components/NewArrivals';
 import WhyShopWithUs from './components/WhyShopWithUs';
 import CustomerReviews from './components/CustomerReviews';
+import InstagramGallery from './components/InstagramGallery';
 import SearchDrawer from './components/SearchDrawer';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
@@ -226,6 +227,9 @@ export default function App() {
 
       {/* Customer Reviews Section */}
       <CustomerReviews goldStyle={goldStyle} />
+
+      {/* Instagram Gallery Section */}
+      <InstagramGallery goldStyle={goldStyle} />
 
       {/* Spacer representing actual page layout */}
       <div className="h-6" />
