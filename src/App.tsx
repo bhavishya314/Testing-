@@ -7,6 +7,7 @@ import FeaturedProducts from './components/FeaturedProducts';
 import ShopByCategory from './components/ShopByCategory';
 import NewArrivals from './components/NewArrivals';
 import WhyShopWithUs from './components/WhyShopWithUs';
+import CustomerReviews from './components/CustomerReviews';
 import SearchDrawer from './components/SearchDrawer';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
@@ -222,6 +223,9 @@ export default function App() {
 
       {/* Why Shop With Us Section */}
       <WhyShopWithUs goldStyle={goldStyle} />
+
+      {/* Customer Reviews Section */}
+      <CustomerReviews goldStyle={goldStyle} />
 
       {/* Spacer representing actual page layout */}
       <div className="h-6" />
