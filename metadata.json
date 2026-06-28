@@ -1,0 +1,6 @@
+{
+  "name": "Aurelia Luxury Navigation",
+  "description": "A premium, fully responsive navigation bar for the luxury clothing brand AURELIA.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
