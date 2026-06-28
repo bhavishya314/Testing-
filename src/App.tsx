@@ -9,6 +9,7 @@ import NewArrivals from './components/NewArrivals';
 import WhyShopWithUs from './components/WhyShopWithUs';
 import CustomerReviews from './components/CustomerReviews';
 import InstagramGallery from './components/InstagramGallery';
+import Newsletter from './components/Newsletter';
 import SearchDrawer from './components/SearchDrawer';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
@@ -230,6 +231,9 @@ export default function App() {
 
       {/* Instagram Gallery Section */}
       <InstagramGallery goldStyle={goldStyle} />
+
+      {/* Premium Newsletter Section */}
+      <Newsletter goldStyle={goldStyle} />
 
       {/* Spacer representing actual page layout */}
       <div className="h-6" />
