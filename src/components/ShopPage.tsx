@@ -18,6 +18,7 @@ export interface Product {
   details: string[];
   gender: 'Women' | 'Men' | 'Unisex';
   type: 'Dress' | 'Overcoat' | 'Blazer' | 'Boots' | 'Ring' | 'Scarf' | 'Gown' | 'Trench' | 'Shirt' | 'Shorts' | 'Bag' | 'Aviators' | 'Vest' | 'Trouser' | 'Blouse' | 'Loafers' | 'Choker' | 'Jacket' | 'Kaftan' | 'Tote' | 'Hat' | 'Duffle' | 'Hoodie' | 'T-Shirt' | 'Sneakers';
+  colors?: string[];
 }
 
 const SHOP_PRODUCTS: Product[] = [
@@ -386,6 +387,33 @@ const SHOP_PRODUCTS: Product[] = [
   }
 ];
 
+const PRODUCT_COLORS: Record<string, string[]> = {
+  'shop-1': ['Gold', 'White', 'Black'],
+  'shop-2': ['Beige', 'Black', 'Grey'],
+  'shop-3': ['White', 'Beige', 'Blue'],
+  'shop-4': ['Black', 'Beige'],
+  'shop-5': ['Gold'],
+  'shop-6': ['Gold', 'White'],
+  'shop-7': ['Black', 'Crimson', 'Emerald'],
+  'shop-8': ['Black', 'Beige'],
+  'shop-9': ['White', 'Blue', 'Beige'],
+  'shop-10': ['White', 'Black', 'Gold'],
+  'shop-11': ['Black', 'Emerald', 'Crimson'],
+  'shop-12': ['Gold', 'Black'],
+  'shop-13': ['White', 'Grey', 'Beige'],
+  'shop-14': ['White', 'Beige', 'Black'],
+  'shop-15': ['White', 'Black', 'Gold'],
+  'shop-16': ['Black'],
+  'shop-17': ['White', 'Gold'],
+  'shop-18': ['Black', 'Blue', 'Crimson'],
+  'shop-19': ['White'],
+  'shop-20': ['White', 'Emerald', 'Black'],
+  'shop-21': ['Gold', 'White', 'Blue'],
+  'shop-22': ['Beige', 'Black'],
+  'shop-23': ['Black', 'Grey', 'White'],
+  'shop-24': ['White', 'Black', 'Gold']
+};
+
 interface ShopPageProps {
   goldStyle: GoldStyle;
   wishlistIds: string[];
@@ -411,6 +439,10 @@ export default function ShopPage({
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [activeSize, setActiveSize] = useState<string>('');
   const [showFiltersMobile, setShowFiltersMobile] = useState<boolean>(false);
+  const [selectedSize, setSelectedSize] = useState<string>('All');
+  const [selectedColor, setSelectedColor] = useState<string>('All');
+  const [maxPrice, setMaxPrice] = useState<number>(5000);
+  const [showFilters, setShowFilters] = useState<boolean>(false);
 
   // Set initial category if routed dynamically
   React.useEffect(() => {
@@ -508,16 +540,37 @@ export default function ShopPage({
           prod.type.toLowerCase().includes(query);
       }
 
-      return matchesCategory && matchesSearch;
+      // 3. Size filter
+      let matchesSize = true;
+      if (selectedSize !== 'All') {
+        matchesSize = prod.sizes.includes(selectedSize) || prod.sizes.includes('One Size');
+      }
+
+      // 4. Color filter
+      let matchesColor = true;
+      if (selectedColor !== 'All') {
+        const prodColors = PRODUCT_COLORS[prod.id] || ['Black', 'White', 'Gold'];
+        matchesColor = prodColors.includes(selectedColor);
+      }
+
+      // 5. Price filter
+      const matchesPrice = prod.price <= maxPrice;
+
+      return matchesCategory && matchesSearch && matchesSize && matchesColor && matchesPrice;
     }).sort((a, b) => {
-      // 3. Sorting
+      // 6. Sorting
       if (sortBy === 'price-low-high') return a.price - b.price;
       if (sortBy === 'price-high-low') return b.price - a.price;
       if (sortBy === 'rating') return b.rating - a.rating;
       if (sortBy === 'reviews') return b.reviews - a.reviews;
+      if (sortBy === 'newest') {
+        const numA = parseInt(a.id.replace('shop-', ''), 10) || 0;
+        const numB = parseInt(b.id.replace('shop-', ''), 10) || 0;
+        return numB - numA;
+      }
       return 0; // featured/default
     });
-  }, [selectedCategory, searchQuery, sortBy]);
+  }, [selectedCategory, searchQuery, selectedSize, selectedColor, maxPrice, sortBy]);
 
   // Set default size when Quick View opens
   const handleOpenQuickView = (prod: Product) => {
@@ -564,77 +617,223 @@ export default function ShopPage({
 
       {/* 2. Controls Area (Category, Search, Sorting) */}
       <section id="shop-controls-bar" className="sticky top-[72px] z-20 bg-[#050505]/90 backdrop-blur-xl border-y border-neutral-900/60 py-4 px-6 md:px-12">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          
-          {/* Categories Horizontal Scroll */}
-          <div className="w-full md:w-auto overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-2 pb-2 md:pb-0">
-            {CATEGORY_TABS.map((cat) => {
-              const isActive = selectedCategory === cat;
-              return (
-                <button
-                  id={`shop-tab-${cat.toLowerCase().replace(/\s+/g, '-')}`}
-                  key={cat}
-                  onClick={() => {
-                    setSelectedCategory(cat);
-                    // scroll to top of product grid safely
-                    document.getElementById('shop-grid-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                  }}
-                  className={`px-4 py-2 rounded-full text-[10px] font-sans font-bold tracking-widest uppercase transition-all duration-300 whitespace-nowrap cursor-pointer ${
-                    isActive
-                      ? `${getGoldBg()} text-black font-semibold scale-102`
-                      : 'bg-neutral-950 text-neutral-400 hover:text-white border border-neutral-900 hover:border-neutral-800'
-                  }`}
-                >
-                  {cat}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Search and Sorting controls */}
-          <div className="w-full md:w-auto flex items-center justify-end gap-3 self-stretch md:self-auto">
-            {/* Real-time search inside the Shop page */}
-            <div className="relative flex-1 md:w-60">
-              <span className="absolute inset-y-0 left-3 flex items-center text-neutral-500 pointer-events-none">
-                <Search className="w-3.5 h-3.5" />
-              </span>
-              <input
-                id="shop-internal-search"
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search collection..."
-                className="w-full pl-9 pr-4 py-2 bg-neutral-950/80 border border-neutral-900 focus:outline-none focus:border-neutral-700 rounded-full text-[11px] font-sans tracking-wide text-white placeholder-neutral-500 transition-colors"
-              />
-              {searchQuery && (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="absolute inset-y-0 right-3 flex items-center text-neutral-500 hover:text-white"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              )}
+        <div className="max-w-7xl mx-auto space-y-4">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            {/* Categories Horizontal Scroll */}
+            <div className="w-full md:w-auto overflow-x-auto no-scrollbar scroll-smooth flex items-center gap-2 pb-2 md:pb-0">
+              {CATEGORY_TABS.map((cat) => {
+                const isActive = selectedCategory === cat;
+                return (
+                  <button
+                    id={`shop-tab-${cat.toLowerCase().replace(/\s+/g, '-')}`}
+                    key={cat}
+                    onClick={() => {
+                      setSelectedCategory(cat);
+                      // scroll to top of product grid safely
+                      document.getElementById('shop-grid-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    className={`px-4 py-2 rounded-full text-[10px] font-sans font-bold tracking-widest uppercase transition-all duration-300 whitespace-nowrap cursor-pointer ${
+                      isActive
+                        ? `${getGoldBg()} text-black font-semibold scale-102`
+                        : 'bg-neutral-950 text-neutral-400 hover:text-white border border-neutral-900 hover:border-neutral-800'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Sorting Select */}
-            <div className="relative shrink-0">
-              <select
-                id="shop-sort-select"
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="appearance-none pl-4 pr-9 py-2 bg-neutral-950 border border-neutral-900 focus:outline-none focus:border-neutral-700 rounded-full text-[11px] font-sans font-medium tracking-wide text-neutral-300 cursor-pointer"
+            {/* Search, Filters Toggle, and Sorting */}
+            <div className="w-full md:w-auto flex flex-wrap md:flex-nowrap items-center justify-end gap-3 self-stretch md:self-auto">
+              {/* Real-time search inside the Shop page */}
+              <div className="relative flex-1 md:w-60 min-w-[150px]">
+                <span className="absolute inset-y-0 left-3 flex items-center text-neutral-500 pointer-events-none">
+                  <Search className="w-3.5 h-3.5" />
+                </span>
+                <input
+                  id="shop-internal-search"
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search collection..."
+                  className="w-full pl-9 pr-4 py-2 bg-neutral-950/80 border border-neutral-900 focus:outline-none focus:border-neutral-700 rounded-full text-[11px] font-sans tracking-wide text-white placeholder-neutral-500 transition-colors"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute inset-y-0 right-3 flex items-center text-neutral-500 hover:text-white"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+
+              {/* Filters Toggle Button */}
+              <button
+                id="shop-filters-toggle"
+                onClick={() => setShowFilters(!showFilters)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-full border text-[11px] font-sans font-medium tracking-wide transition-all duration-300 cursor-pointer ${
+                  showFilters
+                    ? `${getGoldBg()} border-transparent text-black`
+                    : 'bg-neutral-950 border-neutral-900 text-neutral-300 hover:text-white hover:border-neutral-800'
+                }`}
               >
-                <option value="featured">Sort by: Featured</option>
-                <option value="price-low-high">Price: Low to High</option>
-                <option value="price-high-low">Price: High to Low</option>
-                <option value="rating">Top Rated</option>
-                <option value="reviews">Most Reviewed</option>
-              </select>
-              <span className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-neutral-500">
-                <ChevronDown className="w-3 h-3" />
-              </span>
+                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Filters</span>
+                {(selectedSize !== 'All' || selectedColor !== 'All' || maxPrice < 5000) && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+                )}
+              </button>
+
+              {/* Sorting Select */}
+              <div className="relative shrink-0 flex-1 sm:flex-initial">
+                <select
+                  id="shop-sort-select"
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-full sm:w-auto appearance-none pl-4 pr-9 py-2 bg-neutral-950 border border-neutral-900 focus:outline-none focus:border-neutral-700 rounded-full text-[11px] font-sans font-medium tracking-wide text-neutral-300 cursor-pointer"
+                >
+                  <option value="featured">Sort by: Featured</option>
+                  <option value="newest">Sort by: Newest</option>
+                  <option value="price-low-high">Price: Low to High</option>
+                  <option value="price-high-low">Price: High to Low</option>
+                  <option value="rating">Best Rated</option>
+                </select>
+                <span className="absolute inset-y-0 right-3 flex items-center pointer-events-none text-neutral-500">
+                  <ChevronDown className="w-3 h-3" />
+                </span>
+              </div>
             </div>
+
           </div>
+
+          {/* Expanded Filter Panel */}
+          <AnimatePresence>
+            {showFilters && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+                className="overflow-hidden border-t border-neutral-900/60 pt-4"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-2">
+                  {/* Column 1: Size Filter */}
+                  <div className="space-y-3">
+                    <div className="text-[11px] font-sans font-semibold uppercase tracking-[0.15em] text-neutral-400">
+                      Filter by Size
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {['All', 'XS', 'S', 'M', 'L', 'XL'].map((sz) => {
+                        const isSelected = selectedSize === sz;
+                        return (
+                          <button
+                            key={sz}
+                            onClick={() => setSelectedSize(sz)}
+                            className={`px-3 py-1.5 rounded text-[10px] font-sans font-bold tracking-widest uppercase transition-all duration-300 border cursor-pointer ${
+                              isSelected
+                                ? `${getGoldBg()} border-transparent text-black font-semibold`
+                                : 'bg-neutral-950 text-neutral-400 border-neutral-900 hover:text-white hover:border-neutral-800'
+                            }`}
+                          >
+                            {sz}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Column 2: Color Filter */}
+                  <div className="space-y-3">
+                    <div className="text-[11px] font-sans font-semibold uppercase tracking-[0.15em] text-neutral-400">
+                      Filter by Color
+                    </div>
+                    <div className="flex flex-wrap gap-2 items-center">
+                      <button
+                        onClick={() => setSelectedColor('All')}
+                        className={`px-2.5 py-1.5 rounded text-[10px] font-sans font-bold tracking-widest uppercase transition-all duration-300 border cursor-pointer ${
+                          selectedColor === 'All'
+                            ? `${getGoldBg()} border-transparent text-black font-semibold`
+                            : 'bg-neutral-950 text-neutral-400 border-neutral-900 hover:text-white hover:border-neutral-800'
+                        }`}
+                      >
+                        All Colors
+                      </button>
+                      
+                      <div className="flex flex-wrap gap-2">
+                        {[
+                          { name: 'Black', hex: '#111111' },
+                          { name: 'White', hex: '#ffffff' },
+                          { name: 'Gold', hex: goldStyle === 'champagne' ? '#dfba73' : goldStyle === 'bright' ? '#ffd700' : '#c5a880' },
+                          { name: 'Beige', hex: '#d4bba7' },
+                          { name: 'Emerald', hex: '#065f46' },
+                          { name: 'Crimson', hex: '#991b1b' },
+                          { name: 'Blue', hex: '#1e3a8a' },
+                          { name: 'Grey', hex: '#4b5563' }
+                        ].map((col) => {
+                          const isSelected = selectedColor === col.name;
+                          return (
+                            <button
+                              key={col.name}
+                              onClick={() => setSelectedColor(col.name)}
+                              className={`w-6 h-6 rounded-full cursor-pointer hover:scale-110 active:scale-95 transition-all relative border ${
+                                isSelected 
+                                  ? 'border-white scale-110 shadow-[0_0_10px_rgba(255,255,255,0.2)]' 
+                                  : 'border-neutral-900 hover:border-neutral-700'
+                              }`}
+                              style={{ backgroundColor: col.hex }}
+                              title={col.name}
+                              aria-label={`Filter by ${col.name}`}
+                            >
+                              {isSelected && (
+                                <span className="absolute inset-0 flex items-center justify-center">
+                                  <Check className={`w-3 h-3 ${col.name === 'White' || col.name === 'Beige' ? 'text-black' : 'text-white'}`} />
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Column 3: Price Filter */}
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-[11px] font-sans font-semibold uppercase tracking-[0.15em] text-neutral-400">
+                      <span>Filter by Price</span>
+                      <span className={getGoldColor()}>
+                        {maxPrice === 5000 ? 'All Prices' : `Under $${maxPrice.toLocaleString()}`}
+                      </span>
+                    </div>
+                    <div className="relative pt-1">
+                      <input
+                        type="range"
+                        min="300"
+                        max="5000"
+                        step="100"
+                        value={maxPrice}
+                        onChange={(e) => setMaxPrice(Number(e.target.value))}
+                        className={`w-full appearance-none h-1.5 bg-neutral-950 border border-neutral-900 rounded-full outline-none cursor-pointer accent-current ${
+                          goldStyle === 'champagne' 
+                            ? '[&::-webkit-slider-thumb]:bg-[#dfba73] text-[#dfba73]' 
+                            : goldStyle === 'bright'
+                              ? '[&::-webkit-slider-thumb]:bg-[#ffd700] text-[#ffd700]'
+                              : '[&::-webkit-slider-thumb]:bg-[#c5a880] text-[#c5a880]'
+                        } [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:h-3.5 [&::-webkit-slider-thumb]:w-3.5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:hover:scale-125`}
+                      />
+                      <div className="flex justify-between text-[9px] font-sans text-neutral-500 mt-1 uppercase tracking-widest">
+                        <span>$300</span>
+                        <span>$5,000</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
         </div>
       </section>
@@ -643,15 +842,55 @@ export default function ShopPage({
       <main id="shop-grid-section" className="max-w-7xl mx-auto px-6 md:px-12 py-16 min-h-[60vh] space-y-12">
         
         {/* Results Counter / Filter tags */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-neutral-900 pb-4">
-          <p className="font-sans text-[11px] text-neutral-400 tracking-wider">
-            Showing <span className="text-white font-medium">{filteredProducts.length}</span> of 24 masterpieces
-          </p>
-          {(selectedCategory !== 'All' || searchQuery) && (
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-neutral-900 pb-4">
+          <div className="space-y-2">
+            <p className="font-sans text-[11px] text-neutral-400 tracking-wider">
+              Showing <span className="text-white font-medium">{filteredProducts.length}</span> of 24 masterpieces
+            </p>
+            {/* Active filters row */}
+            {(selectedCategory !== 'All' || searchQuery !== '' || selectedSize !== 'All' || selectedColor !== 'All' || maxPrice < 5000) && (
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {selectedCategory !== 'All' && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-900 text-[9px] font-sans text-neutral-400">
+                    Category: {selectedCategory}
+                    <button onClick={() => setSelectedCategory('All')} className="text-neutral-500 hover:text-white ml-1 font-bold cursor-pointer">×</button>
+                  </span>
+                )}
+                {searchQuery !== '' && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-900 text-[9px] font-sans text-neutral-400">
+                    Search: "{searchQuery}"
+                    <button onClick={() => setSearchQuery('')} className="text-neutral-500 hover:text-white ml-1 font-bold cursor-pointer">×</button>
+                  </span>
+                )}
+                {selectedSize !== 'All' && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-900 text-[9px] font-sans text-neutral-400">
+                    Size: {selectedSize}
+                    <button onClick={() => setSelectedSize('All')} className="text-neutral-500 hover:text-white ml-1 font-bold cursor-pointer">×</button>
+                  </span>
+                )}
+                {selectedColor !== 'All' && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-900 text-[9px] font-sans text-neutral-400">
+                    Color: {selectedColor}
+                    <button onClick={() => setSelectedColor('All')} className="text-neutral-500 hover:text-white ml-1 font-bold cursor-pointer">×</button>
+                  </span>
+                )}
+                {maxPrice < 5000 && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-neutral-950 border border-neutral-900 text-[9px] font-sans text-neutral-400">
+                    Price: ≤ ${maxPrice.toLocaleString()}
+                    <button onClick={() => setMaxPrice(5000)} className="text-neutral-500 hover:text-white ml-1 font-bold cursor-pointer">×</button>
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+          {(selectedCategory !== 'All' || searchQuery !== '' || selectedSize !== 'All' || selectedColor !== 'All' || maxPrice < 5000) && (
             <button
               onClick={() => {
                 setSelectedCategory('All');
                 setSearchQuery('');
+                setSelectedSize('All');
+                setSelectedColor('All');
+                setMaxPrice(5000);
               }}
               className="flex items-center gap-1.5 font-sans text-[10px] text-neutral-500 hover:text-white transition-colors cursor-pointer"
             >
@@ -677,6 +916,9 @@ export default function ShopPage({
               onClick={() => {
                 setSelectedCategory('All');
                 setSearchQuery('');
+                setSelectedSize('All');
+                setSelectedColor('All');
+                setMaxPrice(5000);
               }}
               className={`px-6 py-2.5 rounded-sm font-sans font-bold text-[10px] tracking-widest uppercase transition-all duration-300 cursor-pointer ${getGoldBg()}`}
             >
