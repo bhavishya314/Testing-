@@ -5,9 +5,10 @@ import { GoldStyle } from '../types';
 
 interface FooterProps {
   goldStyle: GoldStyle;
+  onNavigate?: (page: 'home' | 'shop') => void;
 }
 
-export default function Footer({ goldStyle }: FooterProps) {
+export default function Footer({ goldStyle, onNavigate }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   const getGoldColor = () => {
@@ -75,15 +76,27 @@ export default function Footer({ goldStyle }: FooterProps) {
             </h3>
             <ul className="space-y-3">
               {[
-                { name: 'Home', href: '#hero-section' },
-                { name: 'Shop', href: '#featured-products' },
-                { name: 'About', href: '#why-shop-section' },
-                { name: 'Contact', href: '#newsletter-section' }
+                { name: 'Home', href: '#hero-section', target: 'home' as const },
+                { name: 'Shop', href: '#featured-products', target: 'shop' as const },
+                { name: 'About', href: '#why-shop-section', target: 'home' as const },
+                { name: 'Contact', href: '#newsletter-section', target: 'home' as const }
               ].map((link, idx) => (
                 <li key={idx}>
                   <a
                     id={`footer-quicklink-${link.name.toLowerCase()}`}
                     href={link.href}
+                    onClick={(e) => {
+                      if (onNavigate) {
+                        e.preventDefault();
+                        onNavigate(link.target);
+                        if (link.target === 'home') {
+                          setTimeout(() => {
+                            const elem = document.getElementById(link.href.slice(1));
+                            elem?.scrollIntoView({ behavior: 'smooth' });
+                          }, 100);
+                        }
+                      }
+                    }}
                     className={`font-sans text-xs text-neutral-400 font-light hover:pl-1.5 transition-all duration-300 flex items-center gap-1 group ${getGoldHover()}`}
                   >
                     <span className="w-1 h-1 rounded-full bg-neutral-800 opacity-0 group-hover:opacity-100 transition-all duration-300" />

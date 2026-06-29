@@ -13,6 +13,8 @@ interface LuxuryNavbarProps {
   onOpenSearch: () => void;
   onOpenCart: () => void;
   onOpenWishlist: () => void;
+  currentPage?: 'home' | 'shop';
+  onNavigate?: (page: 'home' | 'shop', category?: string | null) => void;
 }
 
 const MENU_ITEMS = [
@@ -49,6 +51,8 @@ export default function LuxuryNavbar({
   onOpenSearch,
   onOpenCart,
   onOpenWishlist,
+  currentPage = 'home',
+  onNavigate,
 }: LuxuryNavbarProps) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -213,6 +217,10 @@ export default function LuxuryNavbar({
                 {/* Logo */}
                 <a
                   href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate?.('home');
+                  }}
                   className={`font-serif tracking-[0.25em] text-2xl font-bold transition-all duration-300 flex flex-col justify-center select-none ${getGoldColor()}`}
                 >
                   <span>AURELIA</span>
@@ -238,8 +246,13 @@ export default function LuxuryNavbar({
                     >
                       <button
                         id={`nav-link-${item.name.toLowerCase()}`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          if (item.name === 'Home') onNavigate?.('home');
+                          else if (item.name === 'Shop') onNavigate?.('shop');
+                        }}
                         className={`font-sans text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-300 flex items-center gap-1 cursor-pointer ${
-                          hoveredItem === item.name 
+                          hoveredItem === item.name || (item.name === 'Home' && currentPage === 'home') || (item.name === 'Shop' && currentPage === 'shop')
                             ? (highlightStyle === 'gold-text' ? getGoldColor() : styles.activeText)
                             : styles.text
                         }`}
@@ -273,6 +286,12 @@ export default function LuxuryNavbar({
                                   {item.dropdownItems?.map((drop) => (
                                     <div
                                       key={drop.title}
+                                      onClick={() => {
+                                        setActiveDropdown(null);
+                                        if (item.name === 'Shop') {
+                                          onNavigate?.('shop', drop.title);
+                                        }
+                                      }}
                                       className="group/item cursor-pointer p-2 rounded hover:bg-white/5 transition-all duration-300"
                                     >
                                       <div className="flex items-center gap-1.5">
@@ -320,8 +339,13 @@ export default function LuxuryNavbar({
                   >
                     <button
                       id={`nav-link-${item.name.toLowerCase()}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        if (item.name === 'Home') onNavigate?.('home');
+                        else if (item.name === 'Shop') onNavigate?.('shop');
+                      }}
                       className={`font-sans text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-300 flex items-center gap-1 cursor-pointer ${
-                        hoveredItem === item.name 
+                        hoveredItem === item.name || (item.name === 'Home' && currentPage === 'home') || (item.name === 'Shop' && currentPage === 'shop')
                           ? (highlightStyle === 'gold-text' ? getGoldColor() : styles.activeText)
                           : styles.text
                       }`}
@@ -355,6 +379,12 @@ export default function LuxuryNavbar({
                                 {item.dropdownItems?.map((drop) => (
                                   <div
                                     key={drop.title}
+                                    onClick={() => {
+                                      setActiveDropdown(null);
+                                      if (item.name === 'Shop') {
+                                        onNavigate?.('shop', drop.title);
+                                      }
+                                    }}
                                     className="group/item cursor-pointer p-2 rounded hover:bg-white/5 transition-all duration-300"
                                   >
                                     <div className="flex items-center gap-1.5">
@@ -388,6 +418,10 @@ export default function LuxuryNavbar({
               <div className="absolute left-1/2 -translate-x-1/2 flex justify-center">
                 <a
                   href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate?.('home');
+                  }}
                   className={`font-serif tracking-[0.25em] text-2xl font-bold transition-all duration-300 flex flex-col justify-center select-none ${getGoldColor()}`}
                 >
                   <span>AURELIA</span>
@@ -403,6 +437,10 @@ export default function LuxuryNavbar({
               <div className="flex md:hidden absolute left-1/2 -translate-x-1/2 justify-center">
                 <a
                   href="#"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    onNavigate?.('home');
+                  }}
                   className={`font-serif tracking-[0.25em] text-xl font-bold transition-all duration-300 flex flex-col justify-center select-none ${getGoldColor()}`}
                 >
                   <span>AURELIA</span>
@@ -509,7 +547,12 @@ export default function LuxuryNavbar({
                   >
                     <a
                       href="#"
-                      onClick={() => setMobileMenuOpen(false)}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setMobileMenuOpen(false);
+                        if (item.name === 'Home') onNavigate?.('home');
+                        else if (item.name === 'Shop') onNavigate?.('shop');
+                      }}
                       className={`font-serif text-lg tracking-widest uppercase transition-all duration-300 flex items-center justify-between ${getGoldHoverColor()}`}
                     >
                       <span>{item.name}</span>
@@ -520,7 +563,16 @@ export default function LuxuryNavbar({
                     {item.hasDropdown && (
                       <div className="pl-4 mt-2 border-l border-neutral-900 space-y-2">
                         {item.dropdownItems?.slice(0, 3).map((sub, idx) => (
-                          <div key={idx} className="text-xs text-neutral-400 font-sans font-light hover:text-white transition-colors cursor-pointer">
+                          <div
+                            key={idx}
+                            onClick={() => {
+                              setMobileMenuOpen(false);
+                              if (item.name === 'Shop') {
+                                onNavigate?.('shop', sub.title);
+                              }
+                            }}
+                            className="text-xs text-neutral-400 font-sans font-light hover:text-white transition-colors cursor-pointer"
+                          >
                             {sub.title}
                           </div>
                         ))}

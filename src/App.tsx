@@ -15,6 +15,7 @@ import SearchDrawer from './components/SearchDrawer';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
 import InteractiveShowcase from './components/InteractiveShowcase';
+import ShopPage from './components/ShopPage';
 
 const LUXURY_CATALOG = [
   { id: 'item-1', name: 'Maison Silk Slip Dress', price: 890, image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=300&auto=format&fit=crop', inStock: true },
@@ -33,6 +34,15 @@ export default function App() {
   const [highlightStyle, setHighlightStyle] = useState<HighlightStyle>('underline');
   const [announcementEnabled, setAnnouncementEnabled] = useState(true);
   const [simulatedScroll, setSimulatedScroll] = useState(false);
+  const [currentPage, setCurrentPage] = useState<'home' | 'shop'>('home');
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+
+  // Handle navigation from internal items or navbar
+  const handleNavigate = (page: 'home' | 'shop', category?: string | null) => {
+    setCurrentPage(page);
+    setSelectedCategory(category || null);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Drawer modal states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -191,53 +201,72 @@ export default function App() {
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenCart={() => setIsCartOpen(true)}
         onOpenWishlist={() => setIsWishlistOpen(true)}
+        currentPage={currentPage}
+        onNavigate={handleNavigate}
       />
 
-      {/* 3. Luxury Premium Full-screen Hero Section */}
-      <HeroSection
-        goldStyle={goldStyle}
-        onShopClick={() => setIsCartOpen(true)}
-        onExploreClick={() => {
-          const featured = document.getElementById('featured-products-section');
-          featured?.scrollIntoView({ behavior: 'smooth' });
-        }}
-      />
+      {currentPage === 'home' ? (
+        <>
+          {/* 3. Luxury Premium Full-screen Hero Section */}
+          <HeroSection
+            goldStyle={goldStyle}
+            onShopClick={() => handleNavigate('shop')}
+            onExploreClick={() => {
+              const featured = document.getElementById('featured-products-section');
+              featured?.scrollIntoView({ behavior: 'smooth' });
+            }}
+          />
 
-      {/* 4. Featured Couture Products Section */}
-      <FeaturedProducts
-        goldStyle={goldStyle}
-        wishlistIds={wishlist.map((item) => item.id)}
-        onAddToCart={handleAddToCart}
-        onAddToWishlist={handleAddToWishlist}
-        onRemoveFromWishlist={handleRemoveFromWishlist}
-      />
+          {/* 4. Featured Couture Products Section */}
+          <FeaturedProducts
+            goldStyle={goldStyle}
+            wishlistIds={wishlist.map((item) => item.id)}
+            onAddToCart={handleAddToCart}
+            onAddToWishlist={handleAddToWishlist}
+            onRemoveFromWishlist={handleRemoveFromWishlist}
+          />
 
-      {/* New Arrivals Section */}
-      <NewArrivals
-        goldStyle={goldStyle}
-        wishlistIds={wishlist.map((item) => item.id)}
-        onAddToCart={handleAddToCart}
-        onAddToWishlist={handleAddToWishlist}
-        onRemoveFromWishlist={handleRemoveFromWishlist}
-      />
+          {/* New Arrivals Section */}
+          <NewArrivals
+            goldStyle={goldStyle}
+            wishlistIds={wishlist.map((item) => item.id)}
+            onAddToCart={handleAddToCart}
+            onAddToWishlist={handleAddToWishlist}
+            onRemoveFromWishlist={handleRemoveFromWishlist}
+          />
 
-      {/* 5. Shop By Category Section */}
-      <ShopByCategory goldStyle={goldStyle} />
+          {/* 5. Shop By Category Section */}
+          <ShopByCategory
+            goldStyle={goldStyle}
+            onCategoryClick={(categoryName) => handleNavigate('shop', categoryName)}
+          />
 
-      {/* Why Shop With Us Section */}
-      <WhyShopWithUs goldStyle={goldStyle} />
+          {/* Why Shop With Us Section */}
+          <WhyShopWithUs goldStyle={goldStyle} />
 
-      {/* Customer Reviews Section */}
-      <CustomerReviews goldStyle={goldStyle} />
+          {/* Customer Reviews Section */}
+          <CustomerReviews goldStyle={goldStyle} />
 
-      {/* Instagram Gallery Section */}
-      <InstagramGallery goldStyle={goldStyle} />
+          {/* Instagram Gallery Section */}
+          <InstagramGallery goldStyle={goldStyle} />
 
-      {/* Premium Newsletter Section */}
-      <Newsletter goldStyle={goldStyle} />
+          {/* Premium Newsletter Section */}
+          <Newsletter goldStyle={goldStyle} />
+        </>
+      ) : (
+        <ShopPage
+          goldStyle={goldStyle}
+          initialCategory={selectedCategory}
+          wishlistIds={wishlist.map((item) => item.id)}
+          onAddToCart={handleAddToCart}
+          onAddToWishlist={handleAddToWishlist}
+          onRemoveFromWishlist={handleRemoveFromWishlist}
+          onBackToHome={() => handleNavigate('home')}
+        />
+      )}
 
       {/* Premium Footer Section */}
-      <Footer goldStyle={goldStyle} />
+      <Footer goldStyle={goldStyle} onNavigate={handleNavigate} />
 
       {/* Spacer representing actual page layout */}
       <div className="h-6" />
