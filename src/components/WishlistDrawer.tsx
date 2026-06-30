@@ -11,6 +11,7 @@ interface WishlistDrawerProps {
   onMoveToCart: (item: WishlistItem) => void;
   goldStyle: GoldStyle;
   onViewWishlistPage?: () => void;
+  onProductClick?: (product: any) => void;
 }
 
 export default function WishlistDrawer({
@@ -21,6 +22,7 @@ export default function WishlistDrawer({
   onMoveToCart,
   goldStyle,
   onViewWishlistPage,
+  onProductClick,
 }: WishlistDrawerProps) {
   
   const getGoldColor = () => {
@@ -96,7 +98,13 @@ export default function WishlistDrawer({
                     className="flex gap-4 p-3 rounded-lg border border-neutral-900 bg-neutral-950/40 relative group hover:border-neutral-800 transition-all duration-300"
                   >
                     {/* Item Image */}
-                    <div className="w-20 h-24 overflow-hidden rounded bg-neutral-900 shrink-0 relative">
+                    <div 
+                      onClick={() => {
+                        onProductClick?.(item);
+                        onClose();
+                      }}
+                      className="w-20 h-24 overflow-hidden rounded bg-neutral-900 shrink-0 relative cursor-pointer hover:opacity-90 transition-opacity"
+                    >
                       <img
                         src={item.image}
                         alt={item.name}
@@ -111,7 +119,13 @@ export default function WishlistDrawer({
                     <div className="flex flex-col justify-between py-1 flex-1">
                       <div>
                         <div className="flex justify-between items-start gap-2">
-                          <h4 className="font-serif text-sm tracking-wide text-neutral-200 font-medium">
+                          <h4 
+                            onClick={() => {
+                              onProductClick?.(item);
+                              onClose();
+                            }}
+                            className="font-serif text-sm tracking-wide text-neutral-200 font-medium cursor-pointer hover:underline hover:text-white transition-colors"
+                          >
                             {item.name}
                           </h4>
                           <button

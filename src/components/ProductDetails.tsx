@@ -73,6 +73,205 @@ const getProductGallery = (prod: Product): string[] => {
   return [baseImage, ...selectedAlts];
 };
 
+// Map high-quality color-specific fashion images based on category and selected color
+const getColorGallery = (prod: Product, color: string, defaultGallery: string[]): string[] => {
+  const lowerCat = prod.category.toLowerCase();
+  const lowerType = prod.type.toLowerCase();
+  const lowerName = prod.name.toLowerCase();
+
+  let fashionType: 'dress' | 'outerwear' | 'accessories' | 'jewelry' | 'footwear' = 'dress';
+
+  if (lowerCat.includes('jewelry') || lowerType.includes('ring') || lowerType.includes('choker')) {
+    fashionType = 'jewelry';
+  } else if (lowerCat.includes('accessories') || lowerType.includes('scarf') || lowerType.includes('bag') || lowerType.includes('hat') || lowerType.includes('tote') || lowerType.includes('duffle')) {
+    fashionType = 'accessories';
+  } else if (lowerCat.includes('footwear') || lowerType.includes('boots') || lowerType.includes('loafers') || lowerType.includes('sneakers')) {
+    fashionType = 'footwear';
+  } else if (lowerCat.includes('outerwear') || lowerType.includes('coat') || lowerType.includes('jacket') || lowerType.includes('blazer') || lowerType.includes('trench') || lowerType.includes('vest') || lowerType.includes('hoodie')) {
+    fashionType = 'outerwear';
+  }
+
+  const colorGalleries: Record<string, Record<string, string[]>> = {
+    dress: {
+      Black: [
+        'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop'
+      ],
+      White: [
+        'https://images.unsplash.com/photo-1549064492-6783177e07ca?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1495385794356-15371f348c31?q=80&w=600&auto=format&fit=crop'
+      ],
+      Gold: [
+        'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=600&auto=format&fit=crop'
+      ],
+      Beige: [
+        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop'
+      ],
+      Crimson: [
+        'https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=600&auto=format&fit=crop'
+      ],
+      Emerald: [
+        'https://images.unsplash.com/photo-1618932260643-eee4a2f6c9a6?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop'
+      ],
+      Blue: [
+        'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop'
+      ],
+      Grey: [
+        'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop'
+      ]
+    },
+    outerwear: {
+      Black: [
+        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop'
+      ],
+      Beige: [
+        'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop'
+      ],
+      Grey: [
+        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop'
+      ],
+      White: [
+        'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop'
+      ],
+      Blue: [
+        'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop'
+      ],
+      Crimson: [
+        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop'
+      ],
+      Emerald: [
+        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop'
+      ],
+      Gold: [
+        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop'
+      ]
+    },
+    accessories: {
+      Black: [
+        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop'
+      ],
+      Beige: [
+        'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop'
+      ],
+      White: [
+        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop'
+      ],
+      Gold: [
+        'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop'
+      ],
+      Blue: [
+        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop'
+      ],
+      Grey: [
+        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop'
+      ],
+      Emerald: [
+        'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop'
+      ]
+    },
+    jewelry: {
+      Gold: [
+        'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=600&auto=format&fit=crop'
+      ],
+      White: [
+        'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600&auto=format&fit=crop'
+      ],
+      Black: [
+        'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600&auto=format&fit=crop'
+      ]
+    },
+    footwear: {
+      Black: [
+        'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
+      ],
+      Beige: [
+        'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
+      ],
+      White: [
+        'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
+      ],
+      Gold: [
+        'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
+      ],
+      Grey: [
+        'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
+      ],
+      Blue: [
+        'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=600&auto=format&fit=crop',
+        'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
+      ]
+    }
+  };
+
+  const gallery = colorGalleries[fashionType]?.[color];
+  if (gallery && gallery.length > 0) {
+    return gallery;
+  }
+
+  return defaultGallery;
+};
+
 export default function ProductDetails({
   goldStyle,
   product,
@@ -84,15 +283,31 @@ export default function ProductDetails({
   onSelectProduct
 }: ProductDetailsProps) {
   
-  const galleryImages = useMemo(() => getProductGallery(product), [product]);
+  const colors = useMemo(() => PRODUCT_COLORS[product.id] || ['Black', 'White', 'Gold'], [product.id]);
+  const [selectedColor, setSelectedColor] = useState<string>(colors[0] || 'Black');
+  
+  const galleryImages = useMemo(() => {
+    const defaultGallery = getProductGallery(product);
+    if (selectedColor === colors[0]) {
+      return defaultGallery;
+    }
+    return getColorGallery(product, selectedColor, defaultGallery);
+  }, [product, selectedColor, colors]);
+
   const [activeImage, setActiveImage] = useState<string>(product.image);
   const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0] || 'M');
   
-  const colors = useMemo(() => PRODUCT_COLORS[product.id] || ['Black', 'White', 'Gold'], [product.id]);
-  const [selectedColor, setSelectedColor] = useState<string>(colors[0] || 'Black');
+  // Sync activeImage whenever galleryImages changes (due to product or color selection)
+  React.useEffect(() => {
+    if (galleryImages && galleryImages.length > 0) {
+      setActiveImage(galleryImages[0]);
+    }
+  }, [galleryImages]);
+
   const [quantity, setQuantity] = useState<number>(1);
   const [isCopied, setIsCopied] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'features' | 'shipping' | 'reviews'>('features');
+  const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   
   // Image Zoom State
   const [zoomStyle, setZoomStyle] = useState<React.CSSProperties>({ display: 'none' });
@@ -164,6 +379,13 @@ export default function ProductDetails({
     window.open(`https://wa.me/1234567890?text=${encodedText}`, '_blank');
   };
 
+  const toggleSection = (sectionId: string) => {
+    setOpenSections((prev) => ({
+      ...prev,
+      [sectionId]: !prev[sectionId],
+    }));
+  };
+
   // 4 Related Products of similar category or gender
   const relatedProducts = useMemo(() => {
     return SHOP_PRODUCTS
@@ -230,7 +452,11 @@ export default function ProductDetails({
             onMouseLeave={handleMouseLeave}
           >
             {/* Standard display image */}
-            <img 
+            <motion.img 
+              key={activeImage}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.35, ease: 'easeOut' }}
               src={activeImage} 
               alt={product.name}
               referrerPolicy="no-referrer"
@@ -465,7 +691,7 @@ export default function ProductDetails({
                       id: product.id,
                       name: product.name,
                       price: product.price,
-                      image: product.image,
+                      image: activeImage,
                       size: selectedSize,
                       color: selectedColor,
                     });
@@ -554,201 +780,239 @@ export default function ProductDetails({
         </section>
       </main>
 
-      {/* Tabs Section: Product Features, Shipping & Returns, Customer Reviews */}
-      <section id="tabs-navigation" className="max-w-7xl mx-auto px-6 md:px-12 py-12 border-t border-neutral-900/60 mt-12">
-        <div className="flex items-center justify-center border-b border-neutral-900 gap-6 md:gap-12 pb-px overflow-x-auto no-scrollbar">
+      {/* Collapsible Accordions: Product Details, Care Instructions, Shipping & Returns, Customer Reviews, Size Guide */}
+      <section id="product-accordions" className="max-w-4xl mx-auto px-6 md:px-12 py-12 border-t border-neutral-900/60 mt-12">
+        <div className="divide-y divide-neutral-900/60">
           {[
-            { id: 'features', label: 'Product Features' },
-            { id: 'shipping', label: 'Shipping & Returns' },
-            { id: 'reviews', label: `Reviews (${product.reviews})` }
-          ].map((tab) => {
-            const isTabActive = activeTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id as any)}
-                className={`pb-4 text-[11px] font-sans font-bold tracking-[0.25em] uppercase border-b-2 transition-all duration-300 cursor-pointer whitespace-nowrap ${
-                  isTabActive 
-                    ? 'border-white text-white font-bold' 
-                    : 'border-transparent text-neutral-500 hover:text-white'
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Tab Contents */}
-        <div className="py-10 max-w-4xl mx-auto">
-          <AnimatePresence mode="wait">
-            {activeTab === 'features' && (
-              <motion.div
-                key="features"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="space-y-6 text-neutral-300 font-sans text-xs md:text-sm leading-relaxed"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <h3 className="font-serif text-[15px] tracking-wide text-neutral-100 uppercase">
-                      Couture Highlights
-                    </h3>
-                    <ul className="space-y-2.5">
+            {
+              id: 'details',
+              title: 'Product Details',
+              content: (
+                <div className="text-neutral-400 font-sans text-xs md:text-sm leading-relaxed space-y-4">
+                  <p className="text-neutral-300 font-light">{product.description}</p>
+                  <div className="space-y-3">
+                    <h4 className="font-serif text-xs md:text-sm text-neutral-200 tracking-wider uppercase">Couture Highlights</h4>
+                    <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6">
                       {product.details.map((detail, index) => (
                         <li key={index} className="flex items-start gap-2.5 text-neutral-400">
-                          <Check className={`w-4 h-4 shrink-0 mt-0.5 ${getGoldColor()}`} />
+                          <Check className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${getGoldColor()}`} />
                           <span>{detail}</span>
                         </li>
                       ))}
                     </ul>
                   </div>
-
-                  <div className="space-y-4">
-                    <h3 className="font-serif text-[15px] tracking-wide text-neutral-100 uppercase">
-                      Sourcing & Care
-                    </h3>
-                    <p className="text-neutral-400 font-light">
-                      AURELIA prioritizes high-altitude raw material sourcing under strict ecological oversight. To preserve the structure, weave complexity, and natural silk proteins or premium cashmere loft, we recommend dry cleaning under mild, certified organic green solvents only. Avoid machine tumbling or steam iron exposure.
-                    </p>
-                    <div className="flex items-center gap-2 text-[10px] text-amber-500 bg-amber-950/20 border border-amber-900/30 px-3.5 py-2.5 rounded-sm">
-                      <AlertCircle className="w-4 h-4 shrink-0" />
-                      <span>Complimentary complimentary premium garment bag and custom cedar hangers included.</span>
-                    </div>
+                </div>
+              )
+            },
+            {
+              id: 'care',
+              title: 'Care Instructions',
+              content: (
+                <div className="text-neutral-400 font-sans text-xs md:text-sm leading-relaxed space-y-4">
+                  <p className="text-neutral-400 font-light">
+                    AURELIA prioritizes high-altitude raw material sourcing under strict ecological oversight. To preserve the structure, weave complexity, and natural silk proteins or premium cashmere loft, we recommend dry cleaning under mild, certified organic green solvents only. Avoid machine tumbling or steam iron exposure.
+                  </p>
+                  <div className="flex items-center gap-2.5 text-[10px] text-amber-500 bg-amber-950/20 border border-amber-900/30 px-3.5 py-2.5 rounded-sm">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    <span>Complimentary premium garment bag and custom cedar hangers included.</span>
                   </div>
                 </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'shipping' && (
-              <motion.div
-                key="shipping"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="space-y-6 text-neutral-400 font-sans text-xs md:text-sm leading-relaxed font-light"
-              >
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <h3 className="font-serif text-[15px] tracking-wide text-neutral-100 uppercase font-normal">
+              )
+            },
+            {
+              id: 'shipping',
+              title: 'Shipping & Returns',
+              content: (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-neutral-400 font-sans text-xs md:text-sm leading-relaxed font-light">
+                  <div className="space-y-3">
+                    <h4 className="font-serif text-xs md:text-sm text-neutral-200 tracking-wider uppercase">
                       Complimentary Global Shipping
-                    </h3>
-                    <p>
+                    </h4>
+                    <p className="text-neutral-400">
                       Every Aurelia creation is meticulously packaged by hand in our signature climate-regulated linen boxes. We offer complimentary insured FedEx Express or DHL Priority shipping worldwide.
                     </p>
-                    <ul className="space-y-2">
+                    <ul className="space-y-1 text-neutral-500">
                       <li>• North America & Europe: 1–3 Business Days</li>
                       <li>• Asia Pacific & Middle East: 2–4 Business Days</li>
                       <li>• Signature confirmation required on delivery</li>
                     </ul>
                   </div>
 
-                  <div className="space-y-4">
-                    <h3 className="font-serif text-[15px] tracking-wide text-neutral-100 uppercase font-normal">
+                  <div className="space-y-3">
+                    <h4 className="font-serif text-xs md:text-sm text-neutral-200 tracking-wider uppercase">
                       Artisan Return & Exchange Loop
-                    </h3>
-                    <p>
+                    </h4>
+                    <p className="text-neutral-400">
                       If your masterpiece does not fit precisely to your stature, we invite you to initiate an effortless complimentary exchange or return within 30 days of shipment receipt. 
                     </p>
-                    <p>
+                    <p className="text-neutral-500">
                       Items must remain unworn, unaltered, and accompanied by security tags. Custom tailored alterations or gold-embellished details are final sale.
                     </p>
                   </div>
                 </div>
-              </motion.div>
-            )}
-
-            {activeTab === 'reviews' && (
-              <motion.div
-                key="reviews"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="space-y-8"
-              >
-                {/* Visual Reviews breakdown panel */}
-                <div className="bg-neutral-950/60 border border-neutral-900 p-6 md:p-8 rounded-sm grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-                  <div className="text-center space-y-1">
-                    <div className="font-serif text-4xl md:text-5xl tracking-tight text-white font-medium">
-                      {product.rating.toFixed(1)}
+              )
+            },
+            {
+              id: 'reviews',
+              title: `Customer Reviews (${product.reviews})`,
+              content: (
+                <div className="space-y-6">
+                  {/* Visual Reviews breakdown panel */}
+                  <div className="bg-neutral-950/60 border border-neutral-900 p-6 md:p-8 rounded-sm grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                    <div className="text-center space-y-1">
+                      <div className="font-serif text-4xl md:text-5xl tracking-tight text-white font-medium">
+                        {product.rating.toFixed(1)}
+                      </div>
+                      <div className="flex items-center justify-center gap-0.5 text-amber-500 py-1">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-3.5 h-3.5 fill-current" />
+                        ))}
+                      </div>
+                      <p className="text-[10px] font-sans text-neutral-500 uppercase tracking-widest">
+                        Based on {product.reviews} Master reviews
+                      </p>
                     </div>
-                    <div className="flex items-center justify-center gap-0.5 text-amber-500 py-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-3.5 h-3.5 fill-current" />
+
+                    <div className="md:col-span-2 space-y-2">
+                      {[
+                        { stars: 5, pct: 92 },
+                        { stars: 4, pct: 8 },
+                        { stars: 3, pct: 0 },
+                        { stars: 2, pct: 0 },
+                        { stars: 1, pct: 0 }
+                      ].map((row) => (
+                        <div key={row.stars} className="flex items-center gap-3 text-[10px] font-sans text-neutral-400">
+                          <span className="w-12 text-right">{row.stars} Stars</span>
+                          <div className="flex-1 bg-neutral-900 h-1.5 rounded-full overflow-hidden">
+                            <div 
+                              className={`h-full ${
+                                goldStyle === 'champagne' ? 'bg-[#dfba73]' : goldStyle === 'bright' ? 'bg-[#ffd700]' : 'bg-[#c5a880]'
+                              }`}
+                              style={{ width: `${row.pct}%` }}
+                            />
+                          </div>
+                          <span className="w-8 text-neutral-500">{row.pct}%</span>
+                        </div>
                       ))}
                     </div>
-                    <p className="text-[10px] font-sans text-neutral-500 uppercase tracking-widest">
-                      Based on {product.reviews} Master reviews
-                    </p>
                   </div>
 
-                  <div className="md:col-span-2 space-y-2">
-                    {[
-                      { stars: 5, pct: 92 },
-                      { stars: 4, pct: 8 },
-                      { stars: 3, pct: 0 },
-                      { stars: 2, pct: 0 },
-                      { stars: 1, pct: 0 }
-                    ].map((row) => (
-                      <div key={row.stars} className="flex items-center gap-3 text-[10px] font-sans text-neutral-400">
-                        <span className="w-12 text-right">{row.stars} Stars</span>
-                        <div className="flex-1 bg-neutral-900 h-1.5 rounded-full overflow-hidden">
-                          <div 
-                            className={`h-full ${
-                              goldStyle === 'champagne' ? 'bg-[#dfba73]' : goldStyle === 'bright' ? 'bg-[#ffd700]' : 'bg-[#c5a880]'
-                            }`}
-                            style={{ width: `${row.pct}%` }}
-                          />
+                  {/* Individual reviews stack */}
+                  <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 no-scrollbar">
+                    {reviewData.map((review, idx) => (
+                      <div key={idx} className="bg-neutral-950/40 border border-neutral-900 p-5 rounded-sm space-y-3">
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center gap-0.5 text-amber-500 mb-1">
+                              {[...Array(review.rating)].map((_, i) => (
+                                <Star key={i} className="w-3 h-3 fill-current" />
+                              ))}
+                            </div>
+                            <h4 className="font-serif text-sm tracking-wide text-neutral-100">
+                              {review.title}
+                            </h4>
+                          </div>
+                          <div className="text-right text-[10px] font-sans text-neutral-500">
+                            <span>{review.author}</span>
+                            {review.verified && (
+                              <span className={`block ${getGoldColor()} text-[8px] tracking-wider uppercase mt-0.5`}>Verified Client</span>
+                            )}
+                          </div>
                         </div>
-                        <span className="w-8 text-neutral-500">{row.pct}%</span>
+
+                        <p className="font-sans text-xs md:text-sm text-neutral-400 leading-relaxed font-light">
+                          {review.text}
+                        </p>
+
+                        <div className="flex items-center justify-between text-[9px] font-sans text-neutral-500 pt-2 border-t border-neutral-900/50">
+                          <span>Posted on {review.date}</span>
+                          <button className="hover:text-white transition-colors duration-300 cursor-pointer bg-transparent border-0 p-0 text-[9px]">
+                            Was this helpful? ({review.helpfulness})
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
                 </div>
-
-                {/* Individual reviews stack */}
-                <div className="space-y-6">
-                  {reviewData.map((review, idx) => (
-                    <div key={idx} className="bg-neutral-950/40 border border-neutral-900 p-6 rounded-sm space-y-3">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="flex items-center gap-0.5 text-amber-500 mb-1">
-                            {[...Array(review.rating)].map((_, i) => (
-                              <Star key={i} className="w-3 h-3 fill-current" />
-                            ))}
-                          </div>
-                          <h4 className="font-serif text-sm tracking-wide text-neutral-100">
-                            {review.title}
-                          </h4>
-                        </div>
-                        <div className="text-right text-[10px] font-sans text-neutral-500">
-                          <span>{review.author}</span>
-                          {review.verified && (
-                            <span className={`block ${getGoldColor()} text-[8px] tracking-wider uppercase mt-0.5`}>Verified Client</span>
-                          )}
-                        </div>
-                      </div>
-
-                      <p className="font-sans text-xs md:text-sm text-neutral-400 leading-relaxed font-light">
-                        {review.text}
-                      </p>
-
-                      <div className="flex items-center justify-between text-[9px] font-sans text-neutral-500 pt-2 border-t border-neutral-900/50">
-                        <span>Posted on {review.date}</span>
-                        <button className="hover:text-white transition-colors duration-300 cursor-pointer">
-                          Was this helpful? ({review.helpfulness})
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+              )
+            },
+            {
+              id: 'size_guide',
+              title: 'Size Guide',
+              content: (
+                <div className="space-y-4">
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-left font-sans text-xs text-neutral-400 border-collapse">
+                      <thead>
+                        <tr className="border-b border-neutral-900 text-neutral-200 uppercase tracking-wider text-[10px]">
+                          <th className="py-3 px-4 font-serif">Size</th>
+                          <th className="py-3 px-4 font-serif">Bust / Chest</th>
+                          <th className="py-3 px-4 font-serif">Waist</th>
+                          <th className="py-3 px-4 font-serif">Hips</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-neutral-900/50">
+                        {[
+                          { size: 'XS', bust: '32" - 33" (81-84 cm)', waist: '24" - 25" (61-64 cm)', hips: '34" - 35" (86-89 cm)' },
+                          { size: 'S', bust: '34" - 35" (86-89 cm)', waist: '26" - 27" (66-69 cm)', hips: '36" - 37" (91-94 cm)' },
+                          { size: 'M', bust: '36" - 37" (91-94 cm)', waist: '28" - 29" (71-74 cm)', hips: '38" - 39" (96-99 cm)' },
+                          { size: 'L', bust: '38" - 40" (96-101 cm)', waist: '30" - 32" (76-81 cm)', hips: '40" - 42" (101-106 cm)' },
+                          { size: 'XL', bust: '41" - 43" (104-109 cm)', waist: '33" - 35" (84-89 cm)', hips: '43" - 45" (109-114 cm)' }
+                        ].map((row) => (
+                          <tr key={row.size} className="hover:bg-neutral-950/40 transition-colors">
+                            <td className="py-3 px-4 font-serif font-bold text-white">{row.size}</td>
+                            <td className="py-3 px-4">{row.bust}</td>
+                            <td className="py-3 px-4">{row.waist}</td>
+                            <td className="py-3 px-4">{row.hips}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="text-[10px] text-neutral-500 italic leading-relaxed text-center">
+                    *Stated measurements reflect body contours. Standard fit aligns with typical high-couture sizing models. For bespoke tailoring requests, please contact our private concierge.
+                  </p>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+              )
+            }
+          ].map((section) => {
+            const isOpen = !!openSections[section.id];
+            return (
+              <div key={section.id} className="py-2">
+                <button
+                  onClick={() => toggleSection(section.id)}
+                  className="w-full flex items-center justify-between py-4 text-left hover:text-white transition-colors cursor-pointer group"
+                >
+                  <span className="font-serif text-[12px] md:text-sm tracking-[0.2em] uppercase text-neutral-300 group-hover:text-white transition-colors duration-300">
+                    {section.title}
+                  </span>
+                  <span className="text-neutral-500 group-hover:text-white transition-colors duration-300">
+                    {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                  </span>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial="collapsed"
+                      animate="open"
+                      exit="collapsed"
+                      variants={{
+                        open: { opacity: 1, height: "auto", marginBottom: 16, marginTop: 4 },
+                        collapsed: { opacity: 0, height: 0, marginBottom: 0, marginTop: 0 }
+                      }}
+                      transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                      className="overflow-hidden"
+                    >
+                      <div className="pb-4">
+                        {section.content}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </div>
       </section>
 

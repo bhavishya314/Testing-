@@ -52,7 +52,7 @@ export default function Footer({ goldStyle, onNavigate }: FooterProps) {
               {/* Logo with gold accent */}
               <div className="flex items-center gap-1.5">
                 <span className={`w-1.5 h-1.5 rounded-full ${getGoldBg()}`} />
-                <h2 id="footer-brand-logo" className="font-serif text-2xl tracking-[0.35em] uppercase font-light text-white">
+                <h2 id="footer-brand-logo" className="font-serif text-2xl tracking-[0.35em] uppercase font-bold text-white">
                   AURELIA
                 </h2>
               </div>

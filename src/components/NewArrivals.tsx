@@ -239,7 +239,7 @@ export default function NewArrivals({
   return (
     <section
       id="new-arrivals-section"
-      className="py-24 px-6 md:px-12 bg-[#050505] text-white relative overflow-hidden"
+      className="py-16 md:py-20 px-6 md:px-12 bg-[#050505] text-white relative overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -255,14 +255,14 @@ export default function NewArrivals({
             <div className="flex items-center gap-2">
               <span className={`w-6 h-[1px] ${goldStyle === 'champagne' ? 'bg-[#dfba73]' : goldStyle === 'bright' ? 'bg-[#ffd700]' : 'bg-[#c5a880]'}`} />
               <span className={`font-serif text-[10px] tracking-[0.4em] uppercase ${getGoldColor()}`}>
-                Fresh Releases
+                Curated Favorites
               </span>
             </div>
-            <h2 className="font-serif text-3xl md:text-5xl font-light tracking-widest text-white uppercase leading-tight">
-              New <span className={getGoldColor()}>Arrivals</span>
+            <h2 className="font-serif text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight">
+              Best <span className={getGoldColor()}>Sellers</span>
             </h2>
             <p className="font-sans text-xs md:text-sm text-neutral-400 font-light leading-relaxed">
-              Introducing the season's newest architectural garments. Sculpted silhouettes engineered with fluid drapes and premium organic stitching.
+              Discover our most coveted, highly requested garments. Timeless silhouettes engineered with refined luxury details.
             </p>
           </div>
 
@@ -334,11 +334,11 @@ export default function NewArrivals({
 
                       {/* Badges and actions */}
                       <div className="absolute top-3 left-3 right-3 flex justify-between items-center z-10">
-                        {/* Elegant "NEW" Badge */}
+                        {/* Elegant "BEST SELLER" Badge */}
                         <div className={`flex items-center gap-1 px-2.5 py-1 bg-black/90 backdrop-blur-md border border-[#c5a880]/30 rounded-sm shadow-md`}>
                           <Sparkles className={`w-2.5 h-2.5 animate-pulse ${getGoldColor()}`} />
                           <span className={`font-sans text-[7px] md:text-[8px] tracking-[0.25em] font-semibold uppercase ${getGoldColor()}`}>
-                            NEW
+                            BEST SELLER
                           </span>
                         </div>
 

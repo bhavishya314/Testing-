@@ -107,7 +107,7 @@ export default function InstagramGallery({ goldStyle }: InstagramGalleryProps) {
                 Maison Community
               </span>
             </div>
-            <h2 className="font-serif text-3xl md:text-5xl font-light tracking-widest text-white uppercase leading-tight">
+            <h2 className="font-serif text-3xl md:text-5xl font-bold tracking-tight text-white leading-tight">
               Follow <span className={getGoldColor()}>@AURELIA</span>
             </h2>
             <p className="font-sans text-xs md:text-sm text-neutral-400 font-light leading-relaxed">

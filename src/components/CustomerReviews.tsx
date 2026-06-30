@@ -156,7 +156,7 @@ export default function CustomerReviews({ goldStyle }: CustomerReviewsProps) {
   };
 
   return (
-    <section id="customer-reviews-section" className="py-24 px-6 md:px-12 bg-[#050505] text-white relative overflow-hidden">
+    <section id="customer-reviews-section" className="py-16 md:py-20 px-6 md:px-12 bg-[#050505] text-white relative overflow-hidden">
       {/* Background aesthetics */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neutral-900/60 to-transparent" />
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neutral-900/60 to-transparent" />
@@ -173,7 +173,7 @@ export default function CustomerReviews({ goldStyle }: CustomerReviewsProps) {
             </span>
             <span className={`w-6 h-[1px] ${goldStyle === 'champagne' ? 'bg-[#dfba73]' : goldStyle === 'bright' ? 'bg-[#ffd700]' : 'bg-[#c5a880]'}`} />
           </div>
-          <h2 className="font-serif text-3xl md:text-5xl font-light tracking-widest text-white uppercase">
+          <h2 className="font-serif text-3xl md:text-5xl font-bold tracking-tight text-white">
             Maison <span className={getGoldColor()}>Voices</span>
           </h2>
           <p className="font-sans text-xs md:text-sm text-neutral-400 font-light leading-relaxed max-w-lg mx-auto">

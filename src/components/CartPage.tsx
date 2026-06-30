@@ -28,6 +28,7 @@ interface CartPageProps {
   onRemoveFromCart: (id: string) => void;
   onBackToShop: () => void;
   onClearCart?: () => void;
+  onProductClick?: (product: any) => void;
 }
 
 const SHIPPING_THRESHOLD = 1500;
@@ -39,7 +40,8 @@ export default function CartPage({
   onUpdateQuantity,
   onRemoveFromCart,
   onBackToShop,
-  onClearCart
+  onClearCart,
+  onProductClick
 }: CartPageProps) {
   // Coupon Code State
   const [couponInput, setCouponInput] = useState('');
@@ -281,7 +283,10 @@ export default function CartPage({
                   {/* Left Column: Image & Details */}
                   <div className="col-span-1 md:col-span-6 flex gap-4">
                     {/* Image */}
-                    <div className="w-20 md:w-24 h-28 md:h-32 rounded bg-neutral-900 overflow-hidden shrink-0 relative border border-neutral-900">
+                    <div 
+                      onClick={() => onProductClick?.(item)}
+                      className="w-20 md:w-24 h-28 md:h-32 rounded bg-neutral-900 overflow-hidden shrink-0 relative border border-neutral-900 cursor-pointer hover:opacity-90 transition-opacity"
+                    >
                       <img 
                         src={item.image} 
                         alt={item.name} 
@@ -297,7 +302,10 @@ export default function CartPage({
                         <span className={`text-[9px] tracking-[0.2em] uppercase ${getGoldColor()} font-semibold block mb-1`}>
                           Couture Series
                         </span>
-                        <h3 className="font-serif text-base text-neutral-100 group-hover:text-white transition-colors duration-300">
+                        <h3 
+                          onClick={() => onProductClick?.(item)}
+                          className="font-serif text-base text-neutral-100 group-hover:text-white transition-colors duration-300 cursor-pointer hover:underline"
+                        >
                           {item.name}
                         </h3>
                         

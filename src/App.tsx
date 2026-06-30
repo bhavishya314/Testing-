@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavbarTheme, GoldStyle, LogoAlign, HighlightStyle, CartItem, WishlistItem } from './types';
 import AnnouncementBar from './components/AnnouncementBar';
 import LuxuryNavbar from './components/LuxuryNavbar';
@@ -41,15 +41,87 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
+  // Keep track of scroll positions for each page
+  const scrollPositionsRef = useRef<Record<string, number>>({});
+
+  // Refs to prevent stale closures in history listeners
+  const currentPageRef = useRef(currentPage);
+  const selectedProductRef = useRef(selectedProduct);
+
+  useEffect(() => {
+    currentPageRef.current = currentPage;
+  }, [currentPage]);
+
+  useEffect(() => {
+    selectedProductRef.current = selectedProduct;
+  }, [selectedProduct]);
+
+  // Replace initial state on load to have correct structure
+  useEffect(() => {
+    if (!window.history.state) {
+      window.history.replaceState({ page: 'home', productId: null, category: null }, '');
+    }
+  }, []);
+
   // Handle navigation from internal items or navbar
-  const handleNavigate = (page: 'home' | 'shop' | 'details' | 'cart' | 'wishlist', category?: string | null) => {
+  const handleNavigate = (
+    page: 'home' | 'shop' | 'details' | 'cart' | 'wishlist',
+    category?: string | null,
+    product?: Product | null,
+    isPopState = false
+  ) => {
+    // 1. Save scroll position of the page we are leaving (unless it's popstate back/forward, which is already saved)
+    if (!isPopState) {
+      scrollPositionsRef.current[currentPageRef.current] = window.scrollY;
+    }
+
     setCurrentPage(page);
     setSelectedCategory(category || null);
-    if (page !== 'details' && page !== 'cart' && page !== 'wishlist') {
+    
+    if (product) {
+      setSelectedProduct(product);
+    } else if (page !== 'details' && page !== 'cart' && page !== 'wishlist') {
       setSelectedProduct(null);
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // 2. Manage browser history state
+    if (!isPopState) {
+      const stateObj = {
+        page,
+        productId: product?.id || (page === 'details' ? selectedProductRef.current?.id : null),
+        category: category || null
+      };
+      window.history.pushState(stateObj, '');
+    }
+
+    // 3. Restore or smooth scroll
+    const targetScroll = scrollPositionsRef.current[page] || 0;
+    setTimeout(() => {
+      window.scrollTo({
+        top: targetScroll,
+        behavior: isPopState ? 'auto' : 'smooth'
+      });
+    }, 40);
   };
+
+  // Handle browser back / forward navigation (PopState)
+  useEffect(() => {
+    const handlePopState = (event: PopStateEvent) => {
+      const state = event.state;
+      if (state) {
+        const matchedProduct = state.productId ? SHOP_PRODUCTS.find(p => p.id === state.productId) : null;
+        handleNavigate(state.page, state.category, matchedProduct, true);
+      } else {
+        // Fallback to home
+        handleNavigate('home', null, null, true);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, []);
 
   // Drawer modal states
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -238,9 +310,7 @@ export default function App() {
             onRemoveFromWishlist={handleRemoveFromWishlist}
             onProductClick={(p) => {
               const fullProd = SHOP_PRODUCTS.find((x) => x.id === p.id || x.name === p.name) || SHOP_PRODUCTS[0];
-              setSelectedProduct(fullProd);
-              setCurrentPage('details');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              handleNavigate('details', null, fullProd);
             }}
           />
 
@@ -253,9 +323,7 @@ export default function App() {
             onRemoveFromWishlist={handleRemoveFromWishlist}
             onProductClick={(p) => {
               const fullProd = SHOP_PRODUCTS.find((x) => x.id === p.id || x.name === p.name) || SHOP_PRODUCTS[0];
-              setSelectedProduct(fullProd);
-              setCurrentPage('details');
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              handleNavigate('details', null, fullProd);
             }}
           />
 
@@ -265,14 +333,8 @@ export default function App() {
             onCategoryClick={(categoryName) => handleNavigate('shop', categoryName)}
           />
 
-          {/* Why Shop With Us Section */}
-          <WhyShopWithUs goldStyle={goldStyle} />
-
           {/* Customer Reviews Section */}
           <CustomerReviews goldStyle={goldStyle} />
-
-          {/* Instagram Gallery Section */}
-          <InstagramGallery goldStyle={goldStyle} />
 
           {/* Premium Newsletter Section */}
           <Newsletter goldStyle={goldStyle} />
@@ -287,9 +349,7 @@ export default function App() {
           onRemoveFromWishlist={handleRemoveFromWishlist}
           onBackToHome={() => handleNavigate('home')}
           onProductClick={(p) => {
-            setSelectedProduct(p);
-            setCurrentPage('details');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            handleNavigate('details', null, p);
           }}
         />
       ) : currentPage === 'cart' ? (
@@ -300,6 +360,9 @@ export default function App() {
           onRemoveFromCart={handleRemoveFromCart}
           onBackToShop={() => handleNavigate('shop')}
           onClearCart={() => setCart([])}
+          onProductClick={(p) => {
+            handleNavigate('details', null, p);
+          }}
         />
       ) : currentPage === 'wishlist' ? (
         <WishlistPage
@@ -309,9 +372,7 @@ export default function App() {
           onMoveToCart={handleMoveToCart}
           onBackToShop={() => handleNavigate('shop')}
           onProductClick={(p) => {
-            setSelectedProduct(p);
-            setCurrentPage('details');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            handleNavigate('details', null, p);
           }}
           onClearWishlist={() => setWishlist([])}
         />
@@ -326,8 +387,7 @@ export default function App() {
           onBack={() => handleNavigate('shop')}
           onSelectProduct={(p) => {
             const fullProd = SHOP_PRODUCTS.find((x) => x.id === p.id || x.name === p.name) || p;
-            setSelectedProduct(fullProd);
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            handleNavigate('details', null, fullProd);
           }}
         />
       )}
@@ -335,26 +395,7 @@ export default function App() {
       {/* Premium Footer Section */}
       <Footer goldStyle={goldStyle} onNavigate={handleNavigate} />
 
-      {/* Spacer representing actual page layout */}
-      <div className="h-6" />
 
-      {/* 4. Interactive Showcase Studio */}
-      <InteractiveShowcase
-        theme={theme}
-        setTheme={setTheme}
-        goldStyle={goldStyle}
-        setGoldStyle={setGoldStyle}
-        logoAlign={logoAlign}
-        setLogoAlign={setLogoAlign}
-        highlightStyle={highlightStyle}
-        setHighlightStyle={setHighlightStyle}
-        onAddMockItem={handleAddMockItem}
-        onClearAll={handleClearAll}
-        announcementEnabled={announcementEnabled}
-        setAnnouncementEnabled={setAnnouncementEnabled}
-        simulatedScroll={simulatedScroll}
-        setSimulatedScroll={setSimulatedScroll}
-      />
 
       {/* 4. Functional Drawer overlays */}
       <SearchDrawer
@@ -362,6 +403,10 @@ export default function App() {
         onClose={() => setIsSearchOpen(false)}
         goldStyle={goldStyle}
         onAddToCart={handleAddToCart}
+        onProductClick={(p) => {
+          const fullProd = SHOP_PRODUCTS.find((x) => x.id === p.id || x.name === p.name) || p;
+          handleNavigate('details', null, fullProd);
+        }}
       />
 
       <CartDrawer
@@ -372,6 +417,10 @@ export default function App() {
         onRemoveFromCart={handleRemoveFromCart}
         goldStyle={goldStyle}
         onViewCartPage={() => handleNavigate('cart')}
+        onProductClick={(p) => {
+          const fullProd = SHOP_PRODUCTS.find((x) => x.id === p.id || x.name === p.name) || p;
+          handleNavigate('details', null, fullProd);
+        }}
       />
 
       <WishlistDrawer
@@ -382,6 +431,10 @@ export default function App() {
         onMoveToCart={handleMoveToCart}
         goldStyle={goldStyle}
         onViewWishlistPage={() => handleNavigate('wishlist')}
+        onProductClick={(p) => {
+          const fullProd = SHOP_PRODUCTS.find((x) => x.id === p.id || x.name === p.name) || p;
+          handleNavigate('details', null, fullProd);
+        }}
       />
     </div>
   );

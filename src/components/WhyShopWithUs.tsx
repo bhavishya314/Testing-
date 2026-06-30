@@ -83,7 +83,7 @@ export default function WhyShopWithUs({ goldStyle }: WhyShopWithUsProps) {
             </span>
             <span className={`w-6 h-[1px] ${goldStyle === 'champagne' ? 'bg-[#dfba73]' : goldStyle === 'bright' ? 'bg-[#ffd700]' : 'bg-[#c5a880]'}`} />
           </div>
-          <h2 className="font-serif text-3xl md:text-5xl font-light tracking-widest text-white uppercase">
+          <h2 className="font-serif text-3xl md:text-5xl font-bold tracking-tight text-white">
             Why Shop <span className={getGoldColor()}>With Us</span>
           </h2>
           <p className="font-sans text-xs md:text-sm text-neutral-400 font-light leading-relaxed max-w-lg mx-auto">

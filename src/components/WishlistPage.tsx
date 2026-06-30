@@ -205,7 +205,10 @@ export default function WishlistPage({
                   className="group relative flex flex-col justify-between bg-neutral-950/25 border border-neutral-900/60 rounded-xl overflow-hidden p-3.5 transition-all duration-500 hover:-translate-y-1.5 hover:border-neutral-800/80 hover:shadow-[0_12px_30px_rgba(0,0,0,0.5)]"
                 >
                   {/* Image and Interactive Overlays */}
-                  <div className="relative aspect-[3/4] overflow-hidden rounded-lg bg-neutral-900 mb-4 group/img">
+                  <div 
+                    onClick={() => onProductClick?.(SHOP_PRODUCTS.find(p => p.id === item.id) || item)}
+                    className="relative aspect-[3/4] overflow-hidden rounded-lg bg-neutral-900 mb-4 group/img cursor-pointer"
+                  >
                     {/* Badge */}
                     {details.badge && (
                       <span className="absolute top-3 left-3 z-10 bg-black/80 backdrop-blur-md border border-neutral-800 text-[9px] tracking-[0.2em] px-2.5 py-1 text-white uppercase font-sans font-semibold rounded-sm">
@@ -216,7 +219,10 @@ export default function WishlistPage({
                     {/* Delete Shortcut from Grid */}
                     <button
                       id={`wishlist-page-remove-${item.id}`}
-                      onClick={() => onRemoveFromWishlist(item.id)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRemoveFromWishlist(item.id);
+                      }}
                       className="absolute top-3 right-3 z-10 p-2 rounded-full bg-black/70 backdrop-blur-md border border-neutral-800/60 text-neutral-400 hover:text-red-400 transition-colors duration-300"
                       title="Remove from wishlist"
                     >

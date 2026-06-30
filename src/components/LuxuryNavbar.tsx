@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, Heart, ShoppingBag, Menu, X, ChevronDown, Sparkles, User, MapPin } from 'lucide-react';
+import { Search, Heart, ShoppingBag, Menu, X, ChevronDown, Sparkles, User, MapPin, Sun, Moon } from 'lucide-react';
+import { useTheme } from '../ThemeContext';
 import { NavbarTheme, GoldStyle, LogoAlign, HighlightStyle } from '../types';
 
 interface LuxuryNavbarProps {
@@ -54,6 +55,7 @@ export default function LuxuryNavbar({
   currentPage = 'home',
   onNavigate,
 }: LuxuryNavbarProps) {
+  const { theme: globalTheme, toggleTheme } = useTheme();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -458,6 +460,20 @@ export default function LuxuryNavbar({
                   Paris Salon
                 </span>
               </div>
+
+              {/* Theme Toggle */}
+              <button
+                id="theme-toggle"
+                onClick={toggleTheme}
+                className={`p-2 rounded-full transition-all duration-300 hover:bg-neutral-950/5 dark:hover:bg-white/5 group relative ${styles.text}`}
+                aria-label={globalTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {globalTheme === 'dark' ? (
+                  <Sun className={`w-[18px] h-[18px] transition-transform duration-500 hover:rotate-45 ${getGoldHoverColor()}`} />
+                ) : (
+                  <Moon className={`w-[18px] h-[18px] transition-transform duration-500 hover:-rotate-12 ${getGoldHoverColor()}`} />
+                )}
+              </button>
 
               {/* Search Icon */}
               <button

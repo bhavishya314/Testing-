@@ -1,21 +1,365 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Cinzel", serif;
-  --font-sans: "Montserrat", sans-serif;
-  --color-gold-50: #fdfbf7;
-  --color-gold-100: #fbf5e6;
-  --color-gold-200: #f4e6c1;
-  --color-gold-300: #eacb92;
-  --color-gold-400: #dba75f;
-  --color-gold-500: #c5863d;
-  --color-gold-600: #a7662c;
-  --color-gold-700: #864b22;
-  --color-gold-800: #6a3a1f;
-  --color-gold-900: #57301c;
+  --font-serif: "Manrope", sans-serif;
+  --font-sans: "Manrope", sans-serif;
+  --color-gold-50: #FAFAF8;
+  --color-gold-100: #F5F2EC;
+  --color-gold-200: #F5F2EC;
+  --color-gold-300: #C8A96A;
+  --color-gold-400: #C8A96A;
+  --color-gold-500: #C8A96A;
+  --color-gold-600: #C8A96A;
+  --color-gold-700: #C8A96A;
+  --color-gold-800: #C8A96A;
+  --color-gold-900: #C8A96A;
   
-  --color-luxury-gold: #c5a880;
-  --color-luxury-gold-dark: #a88c63;
-  --color-luxury-gold-light: #e6dfd5;
+  --color-luxury-gold: #C8A96A;
+  --color-luxury-gold-dark: #C8A96A;
+  --color-luxury-gold-light: #F5F2EC;
 }
+
+/* -------------------------------------------------------------
+   AURELIA Luxury Brand - Redesigned Color System Overrides
+   COS, Zara, and Massimo Dutti Minimal Premium Bright Aesthetic
+   ------------------------------------------------------------- */
+
+/* Define our design system variables */
+:root {
+  --color-bg-primary: #FAFAF8;
+  --color-bg-secondary: #F5F2EC;
+  --color-card-bg: #FFFFFF;
+  --color-card-bg-translucent: rgba(255, 255, 255, 0.98);
+  --color-text-primary: #222222;
+  --color-text-secondary: #555555;
+  --color-border-color: #E5E5E5;
+  --color-accent-gold-brand: #C8A96A;
+
+  /* Primary Button */
+  --color-btn-primary-bg: #222222;
+  --color-btn-primary-text: #FFFFFF;
+  --color-btn-primary-border: #222222;
+
+  /* Secondary Button */
+  --color-btn-secondary-bg: #FFFFFF;
+  --color-btn-secondary-text: #222222;
+  --color-btn-secondary-border: #E5E5E5;
+
+  /* Premium subtle shadow for light mode product cards */
+  --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+}
+
+/* Dark mode overrides */
+.dark {
+  --color-bg-primary: #121212;
+  --color-bg-secondary: #242424;
+  --color-card-bg: #1C1C1C;
+  --color-card-bg-translucent: rgba(28, 28, 28, 0.98);
+  --color-text-primary: #F2F2F2;
+  --color-text-secondary: #C8C8C8;
+  --color-border-color: #333333;
+  --color-accent-gold-brand: #C8A96A;
+
+  /* Primary Button in Dark Mode */
+  --color-btn-primary-bg: #F2F2F2;
+  --color-btn-primary-text: #121212;
+  --color-btn-primary-border: #F2F2F2;
+
+  /* Secondary Button in Dark Mode */
+  --color-btn-secondary-bg: #1C1C1C;
+  --color-btn-secondary-text: #F2F2F2;
+  --color-btn-secondary-border: #333333;
+
+  /* Flat or extremely subtle dark mode card shadow */
+  --card-shadow: none;
+}
+
+/* Force standard base elements with smooth 300ms transitions */
+body, html {
+  background-color: var(--color-bg-primary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Page root container */
+#app-root-container {
+  background-color: var(--color-bg-primary) !important;
+  color: var(--color-text-primary) !important;
+}
+
+/* Custom elegant scrollbars for long browsing comfort */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-color);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-gold-brand);
+}
+
+/* Apply global theme-switch transitions strictly to colors and backgrounds to prevent breaking layout animations */
+body, html, #app-root-container, div, section, footer, nav, header, article, p, span, h1, h2, h3, h4, h5, h6, a, button, input, select, textarea, svg, img {
+  transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1), 
+              color 300ms cubic-bezier(0.4, 0, 0.2, 1), 
+              border-color 300ms cubic-bezier(0.4, 0, 0.2, 1), 
+              fill 300ms cubic-bezier(0.4, 0, 0.2, 1), 
+              stroke 300ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Thin divider lines and vertical lines in grids (e.g., hero background guidelines) */
+div[class*="w-[1px]"]:not(button *),
+div[class*="h-[1px]"]:not(button *),
+div.h-px:not(button *),
+div.w-px:not(button *) {
+  background-color: var(--color-border-color) !important;
+}
+
+/* 1. Global Background Class Overrides */
+.bg-\[\#050505\],
+.bg-black,
+.bg-neutral-950,
+.bg-\[\#faf9f6\],
+.bg-\[\#030303\],
+.bg-neutral-900,
+.bg-\[\#0d0d0d\],
+.bg-\[\#0a0a0a\],
+.bg-\[\#0f0f0f\],
+.bg-\[\#0c0c0c\],
+.bg-\[\#090909\],
+.bg-\[\#0e0e0e\],
+.bg-\[\#1c1c1c\],
+.bg-neutral-950\/20,
+.bg-neutral-950\/10,
+.bg-neutral-950\/60,
+.bg-neutral-950\/50 {
+  background-color: var(--color-bg-primary) !important;
+}
+
+/* Secondary Background Sections (Footer, why shop, newsletter, announcement, reviews) */
+#why-shop-section,
+#customer-reviews-section,
+#aurelia-luxury-footer,
+#newsletter-section,
+#announcement-bar,
+.bg-neutral-950\/80,
+.bg-neutral-900\/80,
+.bg-neutral-900\/40,
+.bg-neutral-900\/20,
+.bg-neutral-950\/40,
+.bg-neutral-950\/25,
+.bg-neutral-800\/40,
+.bg-neutral-900\/60,
+.bg-\[\#0d0d0d\]\/40,
+.bg-black\/40,
+.bg-black\/60 {
+  background-color: var(--color-bg-secondary) !important;
+}
+
+/* Drawers, dialogs and modals overlays should have clean cards/white background */
+div[id$="-drawer"],
+div[id$="-panel"],
+div[id$="-modal"],
+.modal-content,
+.bg-black\/95,
+.bg-black\/80,
+.bg-black\/90,
+.bg-black\/85,
+.bg-neutral-950\/95,
+.bg-neutral-950\/90,
+.bg-\[\#050505\]\/95 {
+  background-color: var(--color-card-bg-translucent) !important;
+  border-color: var(--color-border-color) !important;
+}
+
+/* All cards, list items, dropdown lists with elegant subtle shadow transition */
+.group\/card,
+.product-card,
+article,
+.card,
+.dropdown-menu,
+div[class*="group/card"] {
+  background-color: var(--color-card-bg) !important;
+  border: 1px solid var(--color-border-color) !important;
+  box-shadow: var(--card-shadow) !important;
+}
+
+/* 2. Text Color Overrides for Pristine Contrast */
+p, span, div, h1, h2, h3, h4, h5, h6, a, li, label {
+  color: var(--color-text-primary);
+}
+
+/* Primary Text */
+.text-white:not(button *):not(button),
+.text-neutral-50:not(button *):not(button),
+.text-neutral-100:not(button *):not(button),
+.text-neutral-200:not(button *):not(button),
+.text-neutral-300:not(button *):not(button),
+.text-neutral-950:not(button *):not(button) {
+  color: var(--color-text-primary) !important;
+}
+
+/* Secondary Text */
+.text-neutral-400,
+.text-neutral-500,
+.text-neutral-600,
+.placeholder-neutral-500,
+.placeholder-neutral-600,
+.placeholder-neutral-700 {
+  color: var(--color-text-secondary) !important;
+}
+
+/* Accent Gold Text */
+.text-\[\#dfba73\],
+.text-\[\#ffd700\],
+.text-\[\#c5a880\],
+.text-gold-400,
+.text-gold-50,
+.text-gold-100,
+.text-gold-200,
+.text-gold-300,
+.text-gold-500,
+[class*="text-gold-"] {
+  color: var(--color-accent-gold-brand) !important;
+}
+
+/* 3. Border Color Overrides */
+[class*="border-"],
+[class*="divide-"],
+.border-neutral-900,
+.border-neutral-850,
+.border-neutral-800,
+.border-neutral-700,
+.border-neutral-600,
+.border-neutral-900\/60,
+.border-neutral-800\/80,
+.divide-neutral-900,
+.divide-neutral-800 {
+  border-color: var(--color-border-color) !important;
+}
+
+/* 4. Primary Buttons Overrides (Charcoal background with white text, gold on hover) */
+button.bg-\[\#dfba73\],
+button.bg-\[\#ffd700\],
+button.bg-\[\#c5a880\],
+button.bg-luxury-gold,
+.bg-\[\#dfba73\],
+.bg-\[\#ffd700\],
+.bg-\[\#c5a880\],
+.bg-gold-500,
+.bg-gold-400,
+button[id*="add-to-cart"],
+button[id*="subscribe"],
+button[id*="checkout"],
+button[id*="shop-now"] {
+  background-color: var(--color-btn-primary-bg) !important;
+  color: var(--color-btn-primary-text) !important;
+  border: 1px solid var(--color-btn-primary-border) !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+button.bg-\[\#dfba73\]:hover,
+button.bg-\[\#ffd700\]:hover,
+button.bg-\[\#c5a880\]:hover,
+button.bg-luxury-gold:hover,
+.bg-\[\#dfba73\]:hover,
+.bg-\[\#ffd700\]:hover,
+.bg-\[\#c5a880\]:hover,
+.bg-gold-500:hover,
+.bg-gold-400:hover,
+button[id*="add-to-cart"]:hover,
+button[id*="subscribe"]:hover,
+button[id*="checkout"]:hover,
+button[id*="shop-now"]:hover {
+  background-color: var(--color-accent-gold-brand) !important;
+  border-color: var(--color-accent-gold-brand) !important;
+  color: #FFFFFF !important;
+}
+
+/* Force text/icons inside primary buttons/active gold badges */
+button.bg-\[\#dfba73\] *,
+button.bg-\[\#ffd700\] *,
+button.bg-\[\#c5a880\] *,
+button.bg-luxury-gold *,
+.bg-\[\#dfba73\] *,
+.bg-\[\#ffd700\] *,
+.bg-\[\#c5a880\] *,
+.bg-gold-500 *,
+.bg-gold-400 *,
+button[id*="add-to-cart"] *,
+button[id*="subscribe"] *,
+button[id*="checkout"] *,
+button[id*="shop-now"] * {
+  color: var(--color-btn-primary-text) !important;
+}
+
+/* 5. Secondary Buttons Overrides (White background with charcoal border) */
+button.bg-neutral-950,
+button.bg-black,
+button.border-neutral-900,
+button[id*="wishlist"],
+button[id*="back"],
+button[id*="share"] {
+  background-color: var(--color-btn-secondary-bg) !important;
+  border: 1px solid var(--color-btn-secondary-border) !important;
+  color: var(--color-btn-secondary-text) !important;
+  transition: all 0.3s ease-in-out !important;
+}
+
+button.bg-neutral-950:hover,
+button.bg-black:hover,
+button.border-neutral-900:hover,
+button[id*="wishlist"]:hover,
+button[id*="back"]:hover,
+button[id*="share"]:hover {
+  background-color: var(--color-bg-secondary) !important;
+  color: var(--color-text-primary) !important;
+  border-color: var(--color-text-primary) !important;
+}
+
+button.bg-neutral-950 *,
+button.bg-black *,
+button.border-neutral-900 *,
+button[id*="wishlist"] *,
+button[id*="back"] *,
+button[id*="share"] * {
+  color: var(--color-btn-secondary-text) !important;
+}
+
+/* 6. Active State Highlights and Navigation Indicators */
+span.rounded-full[class*="bg-gold-"],
+div.rounded-full[class*="bg-gold-"] {
+  background-color: var(--color-accent-gold-brand) !important;
+}
+
+/* Cart & Wishlist Counters */
+.bg-gold-500,
+.bg-gold-400,
+span[class*="bg-gold-"] {
+  background-color: var(--color-accent-gold-brand) !important;
+  color: #FFFFFF !important;
+}
+span[class*="bg-gold-"] * {
+  color: #FFFFFF !important;
+}
+
+/* 7. Input, Select, and Textarea overrides */
+input, select, textarea {
+  background-color: var(--color-card-bg) !important;
+  color: var(--color-text-primary) !important;
+  border: 1px solid var(--color-border-color) !important;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--color-accent-gold-brand) !important;
+  outline: none !important;
+}
+input::placeholder, textarea::placeholder {
+  color: var(--color-text-secondary) !important;
+  opacity: 0.8 !important;
+}
+

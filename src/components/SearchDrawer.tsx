@@ -8,6 +8,7 @@ interface SearchDrawerProps {
   onClose: () => void;
   goldStyle: GoldStyle;
   onAddToCart: (item: { id: string; name: string; price: number; image: string; size?: string; color?: string }) => void;
+  onProductClick?: (product: any) => void;
 }
 
 const LUXURY_CATALOG = [
@@ -26,7 +27,7 @@ const POPULAR_SUGGESTIONS = [
   'Cruise 2026 Collection',
 ];
 
-export default function SearchDrawer({ isOpen, onClose, goldStyle, onAddToCart }: SearchDrawerProps) {
+export default function SearchDrawer({ isOpen, onClose, goldStyle, onAddToCart, onProductClick }: SearchDrawerProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState(LUXURY_CATALOG);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -176,7 +177,13 @@ export default function SearchDrawer({ isOpen, onClose, goldStyle, onAddToCart }
                         key={item.id}
                         className="flex gap-4 p-3 border border-neutral-900/60 bg-neutral-950/20 hover:border-neutral-800 rounded-lg group transition-all duration-300"
                       >
-                        <div className="w-20 h-24 overflow-hidden rounded bg-neutral-900 shrink-0 relative">
+                        <div 
+                          onClick={() => {
+                            onProductClick?.(item);
+                            onClose();
+                          }}
+                          className="w-20 h-24 overflow-hidden rounded bg-neutral-900 shrink-0 relative cursor-pointer hover:opacity-90 transition-opacity"
+                        >
                           <img
                             src={item.image}
                             alt={item.name}
@@ -191,7 +198,13 @@ export default function SearchDrawer({ isOpen, onClose, goldStyle, onAddToCart }
                             <span className="font-sans text-[9px] tracking-widest text-neutral-500 uppercase">
                               {item.category}
                             </span>
-                            <h5 className="font-serif text-sm tracking-wide text-neutral-100 group-hover:text-white mt-1">
+                            <h5 
+                              onClick={() => {
+                                onProductClick?.(item);
+                                onClose();
+                              }}
+                              className="font-serif text-sm tracking-wide text-neutral-100 group-hover:text-white mt-1 cursor-pointer hover:underline"
+                            >
                               {item.name}
                             </h5>
                           </div>

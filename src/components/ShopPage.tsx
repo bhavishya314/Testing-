@@ -607,11 +607,11 @@ export default function ShopPage({
                 Aurelia Catalog
               </span>
             </div>
-            <h1 className="font-serif text-4xl md:text-6xl font-light tracking-[0.1em] text-white uppercase leading-none">
+            <h1 className="font-serif text-4xl md:text-6xl font-bold tracking-tight text-white leading-none">
               Shop <span className={getGoldColor()}>Couture</span>
             </h1>
-            <p className="font-sans text-xs md:text-sm text-neutral-400 font-light leading-relaxed">
-              Discover timeless luxury pieces crafted for modern style. From bespoke hand-draped gowns in the Paris atelier to tailored Italian cashmere layers, every piece is made with ethical fine silk and solid gold trims.
+            <p className="font-sans text-xs md:text-sm text-neutral-400 font-light tracking-wider">
+              Crafted for Modern Elegance.
             </p>
           </div>
         </div>
@@ -930,7 +930,7 @@ export default function ShopPage({
         )}
 
         {/* 4. Responsive Product Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-10">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 md:gap-x-6 gap-y-8 md:gap-y-10">
           <AnimatePresence mode="popLayout">
             {filteredProducts.map((prod, index) => {
               const isWishlisted = wishlistIds.includes(prod.id);
@@ -1029,7 +1029,7 @@ export default function ShopPage({
 
                       <h3 
                         onClick={() => onProductClick?.(prod)}
-                        className="font-serif text-[12px] md:text-sm tracking-wide text-neutral-200 group-hover:text-white transition-colors uppercase font-normal truncate cursor-pointer hover:underline"
+                        className="font-serif text-[12px] md:text-sm tracking-wide text-neutral-200 group-hover:text-white transition-colors font-semibold truncate cursor-pointer hover:underline"
                       >
                         {prod.name}
                       </h3>
