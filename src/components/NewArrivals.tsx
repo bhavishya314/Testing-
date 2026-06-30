@@ -19,6 +19,7 @@ interface NewArrivalsProps {
   onAddToCart: (item: { id: string; name: string; price: number; image: string }) => void;
   onAddToWishlist: (item: { id: string; name: string; price: number; image: string }) => void;
   onRemoveFromWishlist: (id: string) => void;
+  onProductClick?: (product: any) => void;
 }
 
 const NEW_ARRIVALS_PRODUCTS: NewArrivalProduct[] = [
@@ -96,7 +97,8 @@ export default function NewArrivals({
   wishlistIds,
   onAddToCart,
   onAddToWishlist,
-  onRemoveFromWishlist
+  onRemoveFromWishlist,
+  onProductClick,
 }: NewArrivalsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -314,7 +316,10 @@ export default function NewArrivals({
                   <div className={`group relative flex flex-col justify-between h-full bg-neutral-950/25 border border-neutral-900/60 rounded-2xl overflow-hidden p-3 transition-all duration-500 ease-out hover:-translate-y-2 ${getGoldGlow()}`}>
                     
                     {/* Image Box */}
-                    <div className="relative aspect-[3/4] overflow-hidden rounded-xl bg-neutral-900 mb-4 group/img">
+                    <div 
+                      onClick={() => onProductClick?.(prod)}
+                      className="relative aspect-[3/4] overflow-hidden rounded-xl bg-neutral-900 mb-4 group/img cursor-pointer"
+                    >
                       <img
                         src={prod.image}
                         alt={prod.name}
@@ -388,7 +393,10 @@ export default function NewArrivals({
 
                       {/* Title & Price */}
                       <div className="flex justify-between items-start gap-2">
-                        <h3 className="font-serif text-sm tracking-wide text-neutral-200 group-hover:text-white transition-colors line-clamp-1">
+                        <h3 
+                          onClick={() => onProductClick?.(prod)}
+                          className="font-serif text-sm tracking-wide text-neutral-200 group-hover:text-white transition-colors line-clamp-1 cursor-pointer hover:underline"
+                        >
                           {prod.name}
                         </h3>
                         <div className="flex flex-col items-end shrink-0">

@@ -15,7 +15,9 @@ import SearchDrawer from './components/SearchDrawer';
 import CartDrawer from './components/CartDrawer';
 import WishlistDrawer from './components/WishlistDrawer';
 import InteractiveShowcase from './components/InteractiveShowcase';
-import ShopPage from './components/ShopPage';
+import ShopPage, { Product, SHOP_PRODUCTS } from './components/ShopPage';
+import ProductDetails from './components/ProductDetails';
+import CartPage from './components/CartPage';
 
 const LUXURY_CATALOG = [
   { id: 'item-1', name: 'Maison Silk Slip Dress', price: 890, image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=300&auto=format&fit=crop', inStock: true },
@@ -34,13 +36,17 @@ export default function App() {
   const [highlightStyle, setHighlightStyle] = useState<HighlightStyle>('underline');
   const [announcementEnabled, setAnnouncementEnabled] = useState(true);
   const [simulatedScroll, setSimulatedScroll] = useState(false);
-  const [currentPage, setCurrentPage] = useState<'home' | 'shop'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'shop' | 'details' | 'cart'>('home');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
   // Handle navigation from internal items or navbar
-  const handleNavigate = (page: 'home' | 'shop', category?: string | null) => {
+  const handleNavigate = (page: 'home' | 'shop' | 'details' | 'cart', category?: string | null) => {
     setCurrentPage(page);
     setSelectedCategory(category || null);
+    if (page !== 'details' && page !== 'cart') {
+      setSelectedProduct(null);
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -199,9 +205,9 @@ export default function App() {
         cartCount={totalCartCount}
         wishlistCount={wishlistCount}
         onOpenSearch={() => setIsSearchOpen(true)}
-        onOpenCart={() => setIsCartOpen(true)}
+        onOpenCart={() => handleNavigate('cart')}
         onOpenWishlist={() => setIsWishlistOpen(true)}
-        currentPage={currentPage}
+        currentPage={currentPage === 'home' ? 'home' : 'shop'}
         onNavigate={handleNavigate}
       />
 
@@ -224,6 +230,12 @@ export default function App() {
             onAddToCart={handleAddToCart}
             onAddToWishlist={handleAddToWishlist}
             onRemoveFromWishlist={handleRemoveFromWishlist}
+            onProductClick={(p) => {
+              const fullProd = SHOP_PRODUCTS.find((x) => x.id === p.id || x.name === p.name) || SHOP_PRODUCTS[0];
+              setSelectedProduct(fullProd);
+              setCurrentPage('details');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           />
 
           {/* New Arrivals Section */}
@@ -233,6 +245,12 @@ export default function App() {
             onAddToCart={handleAddToCart}
             onAddToWishlist={handleAddToWishlist}
             onRemoveFromWishlist={handleRemoveFromWishlist}
+            onProductClick={(p) => {
+              const fullProd = SHOP_PRODUCTS.find((x) => x.id === p.id || x.name === p.name) || SHOP_PRODUCTS[0];
+              setSelectedProduct(fullProd);
+              setCurrentPage('details');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           />
 
           {/* 5. Shop By Category Section */}
@@ -253,7 +271,7 @@ export default function App() {
           {/* Premium Newsletter Section */}
           <Newsletter goldStyle={goldStyle} />
         </>
-      ) : (
+      ) : currentPage === 'shop' ? (
         <ShopPage
           goldStyle={goldStyle}
           initialCategory={selectedCategory}
@@ -262,6 +280,35 @@ export default function App() {
           onAddToWishlist={handleAddToWishlist}
           onRemoveFromWishlist={handleRemoveFromWishlist}
           onBackToHome={() => handleNavigate('home')}
+          onProductClick={(p) => {
+            setSelectedProduct(p);
+            setCurrentPage('details');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+        />
+      ) : currentPage === 'cart' ? (
+        <CartPage
+          goldStyle={goldStyle}
+          cartItems={cart}
+          onUpdateQuantity={handleUpdateCartQuantity}
+          onRemoveFromCart={handleRemoveFromCart}
+          onBackToShop={() => handleNavigate('shop')}
+          onClearCart={() => setCart([])}
+        />
+      ) : (
+        <ProductDetails
+          goldStyle={goldStyle}
+          product={selectedProduct || SHOP_PRODUCTS[0]}
+          wishlistIds={wishlist.map((item) => item.id)}
+          onAddToCart={handleAddToCart}
+          onAddToWishlist={handleAddToWishlist}
+          onRemoveFromWishlist={handleRemoveFromWishlist}
+          onBack={() => handleNavigate('shop')}
+          onSelectProduct={(p) => {
+            const fullProd = SHOP_PRODUCTS.find((x) => x.id === p.id || x.name === p.name) || p;
+            setSelectedProduct(fullProd);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
         />
       )}
 
@@ -304,6 +351,7 @@ export default function App() {
         onUpdateQuantity={handleUpdateCartQuantity}
         onRemoveFromCart={handleRemoveFromCart}
         goldStyle={goldStyle}
+        onViewCartPage={() => handleNavigate('cart')}
       />
 
       <WishlistDrawer

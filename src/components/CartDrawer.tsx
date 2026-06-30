@@ -10,6 +10,7 @@ interface CartDrawerProps {
   onUpdateQuantity: (id: string, delta: number) => void;
   onRemoveFromCart: (id: string) => void;
   goldStyle: GoldStyle;
+  onViewCartPage?: () => void;
 }
 
 const SHIPPING_THRESHOLD = 1500; // Free luxury express shipping above $1500
@@ -21,6 +22,7 @@ export default function CartDrawer({
   onUpdateQuantity,
   onRemoveFromCart,
   goldStyle,
+  onViewCartPage,
 }: CartDrawerProps) {
   const [giftWrap, setGiftWrap] = useState(false);
 
@@ -267,13 +269,19 @@ export default function CartDrawer({
                 </div>
               </div>
 
-              <button
-                id="checkout-btn"
-                disabled={cartItems.length === 0}
-                className={`w-full py-3.5 font-sans font-bold text-xs tracking-[0.25em] uppercase rounded-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed ${getGoldBtnClass()}`}
-              >
-                Proceed to Checkout
-              </button>
+              <div className="space-y-2.5">
+                <button
+                  id="checkout-btn"
+                  onClick={() => {
+                    onClose();
+                    onViewCartPage?.();
+                  }}
+                  disabled={cartItems.length === 0}
+                  className={`w-full py-3.5 font-sans font-bold text-xs tracking-[0.25em] uppercase rounded-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer ${getGoldBtnClass()}`}
+                >
+                  View Dedicated Bag
+                </button>
+              </div>
               <p className="text-[9px] text-neutral-600 font-sans text-center leading-normal">
                 Secure transactions protected by 256-bit encryption. Duties and taxes calculated at courier handover.
               </p>

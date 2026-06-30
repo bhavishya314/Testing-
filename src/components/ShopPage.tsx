@@ -21,7 +21,7 @@ export interface Product {
   colors?: string[];
 }
 
-const SHOP_PRODUCTS: Product[] = [
+export const SHOP_PRODUCTS: Product[] = [
   {
     id: 'shop-1',
     name: 'Maison Silk Slip Dress',
@@ -387,7 +387,7 @@ const SHOP_PRODUCTS: Product[] = [
   }
 ];
 
-const PRODUCT_COLORS: Record<string, string[]> = {
+export const PRODUCT_COLORS: Record<string, string[]> = {
   'shop-1': ['Gold', 'White', 'Black'],
   'shop-2': ['Beige', 'Black', 'Grey'],
   'shop-3': ['White', 'Beige', 'Blue'],
@@ -422,6 +422,7 @@ interface ShopPageProps {
   onRemoveFromWishlist: (id: string) => void;
   initialCategory?: string | null;
   onBackToHome: () => void;
+  onProductClick?: (product: Product) => void;
 }
 
 export default function ShopPage({
@@ -431,7 +432,8 @@ export default function ShopPage({
   onAddToWishlist,
   onRemoveFromWishlist,
   initialCategory = null,
-  onBackToHome
+  onBackToHome,
+  onProductClick
 }: ShopPageProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -947,7 +949,10 @@ export default function ShopPage({
                   {/* Top Interactive Anchor Area */}
                   <div>
                     {/* Media container */}
-                    <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-neutral-950">
+                    <div 
+                      onClick={() => onProductClick?.(prod)}
+                      className="relative aspect-[4/5] rounded-lg overflow-hidden bg-neutral-950 cursor-pointer"
+                    >
                       {/* Image zoom on hover */}
                       <img
                         src={prod.image}
@@ -1022,7 +1027,10 @@ export default function ShopPage({
                         </div>
                       </div>
 
-                      <h3 className="font-serif text-[12px] md:text-sm tracking-wide text-neutral-200 group-hover:text-white transition-colors uppercase font-normal truncate">
+                      <h3 
+                        onClick={() => onProductClick?.(prod)}
+                        className="font-serif text-[12px] md:text-sm tracking-wide text-neutral-200 group-hover:text-white transition-colors uppercase font-normal truncate cursor-pointer hover:underline"
+                      >
                         {prod.name}
                       </h3>
                     </div>

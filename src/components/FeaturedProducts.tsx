@@ -24,6 +24,7 @@ interface FeaturedProductsProps {
   onAddToCart: (item: { id: string; name: string; price: number; image: string }) => void;
   onAddToWishlist: (item: { id: string; name: string; price: number; image: string }) => void;
   onRemoveFromWishlist: (id: string) => void;
+  onProductClick?: (product: any) => void;
 }
 
 const PRODUCTS: Product[] = [
@@ -143,6 +144,7 @@ export default function FeaturedProducts({
   onAddToCart,
   onAddToWishlist,
   onRemoveFromWishlist,
+  onProductClick,
 }: FeaturedProductsProps) {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [selectedSize, setSelectedSize] = useState<string>('');
@@ -284,7 +286,10 @@ export default function FeaturedProducts({
                 className={`group relative flex flex-col justify-between bg-neutral-950/25 border border-neutral-900/60 rounded-lg overflow-hidden transition-all duration-500 ease-out p-3 hover:-translate-y-2 ${getCardHoverShadow()}`}
               >
                 {/* Image Container with Hover Actions */}
-                <div className="relative aspect-[3/4] overflow-hidden rounded bg-neutral-900 mb-4 group/img">
+                <div 
+                  onClick={() => onProductClick?.(prod)}
+                  className="relative aspect-[3/4] overflow-hidden rounded bg-neutral-900 mb-4 group/img cursor-pointer"
+                >
                   <img
                     src={prod.image}
                     alt={prod.name}
@@ -376,7 +381,10 @@ export default function FeaturedProducts({
 
                   {/* Title & Price */}
                   <div className="flex justify-between items-start gap-2">
-                    <h3 className="font-serif text-sm tracking-wide text-neutral-200 group-hover:text-white transition-colors line-clamp-1">
+                    <h3 
+                      onClick={() => onProductClick?.(prod)}
+                      className="font-serif text-sm tracking-wide text-neutral-200 group-hover:text-white transition-colors line-clamp-1 cursor-pointer hover:underline"
+                    >
                       {prod.name}
                     </h3>
                     <div className="flex flex-col items-end shrink-0">

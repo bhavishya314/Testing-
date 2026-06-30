@@ -10,6 +10,7 @@ export interface CartItem {
   image: string;
   quantity: number;
   size: string;
+  color?: string;
 }
 
 export interface WishlistItem {
