@@ -10,6 +10,7 @@ interface WishlistDrawerProps {
   onRemoveFromWishlist: (id: string) => void;
   onMoveToCart: (item: WishlistItem) => void;
   goldStyle: GoldStyle;
+  onViewWishlistPage?: () => void;
 }
 
 export default function WishlistDrawer({
@@ -19,6 +20,7 @@ export default function WishlistDrawer({
   onRemoveFromWishlist,
   onMoveToCart,
   goldStyle,
+  onViewWishlistPage,
 }: WishlistDrawerProps) {
   
   const getGoldColor = () => {
@@ -164,13 +166,25 @@ export default function WishlistDrawer({
               <p className="text-[10px] text-neutral-400 font-sans text-center leading-relaxed">
                 Wishlist items are held for 30 days. Stock status is live from our Paris & Milan salons.
               </p>
-              <button
-                id="wishlist-close-panel-btn"
-                onClick={onClose}
-                className="w-full py-3 bg-white text-black font-sans font-semibold text-[11px] tracking-[0.2em] uppercase rounded-sm hover:bg-neutral-200 active:scale-98 transition-all duration-300"
-              >
-                Continue Exploring
-              </button>
+              <div className="space-y-2.5">
+                <button
+                  id="view-dedicated-wishlist-btn"
+                  onClick={() => {
+                    onClose();
+                    onViewWishlistPage?.();
+                  }}
+                  className={`w-full py-3 bg-white text-black font-sans font-semibold text-[11px] tracking-[0.2em] uppercase rounded-sm hover:bg-neutral-200 active:scale-98 transition-all duration-300 cursor-pointer`}
+                >
+                  View Dedicated Wishlist
+                </button>
+                <button
+                  id="wishlist-close-panel-btn"
+                  onClick={onClose}
+                  className={`w-full py-2.5 border border-neutral-800 text-neutral-400 font-sans font-semibold text-[10px] tracking-[0.2em] uppercase rounded-sm hover:text-white hover:border-neutral-600 active:scale-98 transition-all duration-300 cursor-pointer`}
+                >
+                  Continue Exploring
+                </button>
+              </div>
             </div>
           </motion.div>
         </>

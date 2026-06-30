@@ -7,7 +7,7 @@ interface SearchDrawerProps {
   isOpen: boolean;
   onClose: () => void;
   goldStyle: GoldStyle;
-  onAddToCart: (item: { id: string; name: string; price: number; image: string }) => void;
+  onAddToCart: (item: { id: string; name: string; price: number; image: string; size?: string; color?: string }) => void;
 }
 
 const LUXURY_CATALOG = [

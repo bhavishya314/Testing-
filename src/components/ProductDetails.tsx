@@ -12,7 +12,7 @@ interface ProductDetailsProps {
   goldStyle: GoldStyle;
   product: Product;
   wishlistIds: string[];
-  onAddToCart: (item: { id: string; name: string; price: number; image: string }) => void;
+  onAddToCart: (item: { id: string; name: string; price: number; image: string; size?: string; color?: string }) => void;
   onAddToWishlist: (item: { id: string; name: string; price: number; image: string }) => void;
   onRemoveFromWishlist: (id: string) => void;
   onBack: () => void;
@@ -465,7 +465,9 @@ export default function ProductDetails({
                       id: product.id,
                       name: product.name,
                       price: product.price,
-                      image: product.image
+                      image: product.image,
+                      size: selectedSize,
+                      color: selectedColor,
                     });
                   }
                 }}

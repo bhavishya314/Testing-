@@ -21,7 +21,7 @@ interface Product {
 interface FeaturedProductsProps {
   goldStyle: GoldStyle;
   wishlistIds: string[];
-  onAddToCart: (item: { id: string; name: string; price: number; image: string }) => void;
+  onAddToCart: (item: { id: string; name: string; price: number; image: string; size?: string; color?: string }) => void;
   onAddToWishlist: (item: { id: string; name: string; price: number; image: string }) => void;
   onRemoveFromWishlist: (id: string) => void;
   onProductClick?: (product: any) => void;
@@ -557,6 +557,7 @@ export default function FeaturedProducts({
                           name: selectedProduct.name,
                           price: selectedProduct.price,
                           image: selectedProduct.image,
+                          size: selectedSize,
                         });
                         setSelectedProduct(null);
                       }}

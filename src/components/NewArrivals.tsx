@@ -16,7 +16,7 @@ interface NewArrivalProduct {
 interface NewArrivalsProps {
   goldStyle: GoldStyle;
   wishlistIds: string[];
-  onAddToCart: (item: { id: string; name: string; price: number; image: string }) => void;
+  onAddToCart: (item: { id: string; name: string; price: number; image: string; size?: string; color?: string }) => void;
   onAddToWishlist: (item: { id: string; name: string; price: number; image: string }) => void;
   onRemoveFromWishlist: (id: string) => void;
   onProductClick?: (product: any) => void;
