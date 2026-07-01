@@ -14,8 +14,8 @@ interface LuxuryNavbarProps {
   onOpenSearch: () => void;
   onOpenCart: () => void;
   onOpenWishlist: () => void;
-  currentPage?: 'home' | 'shop';
-  onNavigate?: (page: 'home' | 'shop', category?: string | null) => void;
+  currentPage?: 'home' | 'shop' | 'details' | 'cart' | 'wishlist' | 'contact';
+  onNavigate?: (page: 'home' | 'shop' | 'details' | 'cart' | 'wishlist' | 'contact', category?: string | null) => void;
 }
 
 const MENU_ITEMS = [
@@ -31,12 +31,13 @@ const MENU_ITEMS = [
     ]
   },
   { 
-    name: 'About', 
+    name: 'Collections', 
     hasDropdown: true,
     dropdownItems: [
-      { title: 'Maison Heritage', desc: 'A legacy of fine tailoring founded in 1924' },
-      { title: 'Ateliers & Craft', desc: 'Sourcing organic wools & sustainable silks' },
-      { title: 'Our Salons', desc: 'Visit our physical salons in Paris, Milan & Tokyo' },
+      { title: 'Ready to Wear', desc: 'Fine Italian cashmere, silk slips & tailored outerwear' },
+      { title: 'New Arrivals', desc: 'Be the first to secure our latest boutique releases' },
+      { title: 'Accessories', desc: 'Signature calfskin bags, silk scarves & fine accessories' },
+      { title: 'Best Sellers', desc: 'Our most coveted iconic couture pieces' },
     ]
   },
   { name: 'Contact', hasDropdown: false }
@@ -252,9 +253,14 @@ export default function LuxuryNavbar({
                           e.preventDefault();
                           if (item.name === 'Home') onNavigate?.('home');
                           else if (item.name === 'Shop') onNavigate?.('shop');
+                          else if (item.name === 'Collections') onNavigate?.('shop');
+                          else if (item.name === 'Contact') onNavigate?.('contact');
                         }}
                         className={`font-sans text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-300 flex items-center gap-1 cursor-pointer ${
-                          hoveredItem === item.name || (item.name === 'Home' && currentPage === 'home') || (item.name === 'Shop' && currentPage === 'shop')
+                          hoveredItem === item.name || 
+                          (item.name === 'Home' && currentPage === 'home') || 
+                          ((item.name === 'Shop' || item.name === 'Collections') && currentPage === 'shop') || 
+                          (item.name === 'Contact' && currentPage === 'contact')
                             ? (highlightStyle === 'gold-text' ? getGoldColor() : styles.activeText)
                             : styles.text
                         }`}
@@ -290,7 +296,7 @@ export default function LuxuryNavbar({
                                       key={drop.title}
                                       onClick={() => {
                                         setActiveDropdown(null);
-                                        if (item.name === 'Shop') {
+                                        if (item.name === 'Shop' || item.name === 'Collections') {
                                           onNavigate?.('shop', drop.title);
                                         }
                                       }}
@@ -345,9 +351,14 @@ export default function LuxuryNavbar({
                         e.preventDefault();
                         if (item.name === 'Home') onNavigate?.('home');
                         else if (item.name === 'Shop') onNavigate?.('shop');
+                        else if (item.name === 'Collections') onNavigate?.('shop');
+                        else if (item.name === 'Contact') onNavigate?.('contact');
                       }}
                       className={`font-sans text-[11px] tracking-[0.2em] uppercase font-medium transition-all duration-300 flex items-center gap-1 cursor-pointer ${
-                        hoveredItem === item.name || (item.name === 'Home' && currentPage === 'home') || (item.name === 'Shop' && currentPage === 'shop')
+                        hoveredItem === item.name || 
+                        (item.name === 'Home' && currentPage === 'home') || 
+                        ((item.name === 'Shop' || item.name === 'Collections') && currentPage === 'shop') || 
+                        (item.name === 'Contact' && currentPage === 'contact')
                           ? (highlightStyle === 'gold-text' ? getGoldColor() : styles.activeText)
                           : styles.text
                       }`}
@@ -383,7 +394,7 @@ export default function LuxuryNavbar({
                                     key={drop.title}
                                     onClick={() => {
                                       setActiveDropdown(null);
-                                      if (item.name === 'Shop') {
+                                      if (item.name === 'Shop' || item.name === 'Collections') {
                                         onNavigate?.('shop', drop.title);
                                       }
                                     }}
@@ -568,6 +579,8 @@ export default function LuxuryNavbar({
                         setMobileMenuOpen(false);
                         if (item.name === 'Home') onNavigate?.('home');
                         else if (item.name === 'Shop') onNavigate?.('shop');
+                        else if (item.name === 'Collections') onNavigate?.('shop');
+                        else if (item.name === 'Contact') onNavigate?.('contact');
                       }}
                       className={`font-serif text-lg tracking-widest uppercase transition-all duration-300 flex items-center justify-between ${getGoldHoverColor()}`}
                     >
@@ -578,12 +591,12 @@ export default function LuxuryNavbar({
                     </a>
                     {item.hasDropdown && (
                       <div className="pl-4 mt-2 border-l border-neutral-900 space-y-2">
-                        {item.dropdownItems?.slice(0, 3).map((sub, idx) => (
+                        {item.dropdownItems?.slice(0, 4).map((sub, idx) => (
                           <div
                             key={idx}
                             onClick={() => {
                               setMobileMenuOpen(false);
-                              if (item.name === 'Shop') {
+                              if (item.name === 'Shop' || item.name === 'Collections') {
                                 onNavigate?.('shop', sub.title);
                               }
                             }}

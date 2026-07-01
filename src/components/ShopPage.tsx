@@ -457,10 +457,16 @@ export default function ShopPage({
       else if (catLower === 't-shirts' || catLower === 'tshirts') setSelectedCategory('T-Shirts');
       else if (catLower === 'sneakers') setSelectedCategory('Sneakers');
       else if (catLower === 'accessories' || catLower === 'fine accessories') setSelectedCategory('Accessories');
-      else if (catLower === 'ready-to-wear') setSelectedCategory('Ready-to-Wear');
+      else if (catLower === 'ready-to-wear' || catLower === 'ready to wear') setSelectedCategory('Ready-to-Wear');
       else if (catLower === 'haute couture') setSelectedCategory('Haute Couture');
       else if (catLower === 'the cruise collection' || catLower === 'cruise collection') setSelectedCategory('Cruise Collection');
-      else setSelectedCategory('All');
+      else if (catLower === 'new arrivals') {
+        setSelectedCategory('All');
+        setSortBy('newest');
+      } else if (catLower === 'best sellers') {
+        setSelectedCategory('All');
+        setSortBy('rating');
+      } else setSelectedCategory('All');
       
       // Scroll to shop header
       const header = document.getElementById('shop-top-header');

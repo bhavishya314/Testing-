@@ -306,7 +306,6 @@ export default function ProductDetails({
 
   const [quantity, setQuantity] = useState<number>(1);
   const [isCopied, setIsCopied] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<'features' | 'shipping' | 'reviews'>('features');
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({});
   
   // Image Zoom State
@@ -546,10 +545,12 @@ export default function ProductDetails({
               <span className="h-3 w-px bg-neutral-800" />
               <button 
                 onClick={() => {
-                  setActiveTab('reviews');
-                  document.getElementById('tabs-navigation')?.scrollIntoView({ behavior: 'smooth' });
+                  setOpenSections((prev) => ({ ...prev, reviews: true }));
+                  setTimeout(() => {
+                    document.getElementById('product-accordions')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                  }, 50);
                 }} 
-                className="font-sans text-[10px] text-neutral-400 hover:text-white underline cursor-pointer"
+                className="font-sans text-[10px] text-neutral-400 hover:text-white underline cursor-pointer bg-transparent border-0 p-0"
               >
                 {product.reviews} customer reviews
               </button>
@@ -628,7 +629,17 @@ export default function ProductDetails({
             <div className="space-y-2.5">
               <div className="flex justify-between items-center text-[11px] font-sans uppercase tracking-[0.2em] text-neutral-400">
                 <span>Size: <strong className="text-white font-normal">{selectedSize}</strong></span>
-                <button className="text-[10px] text-neutral-500 hover:text-white underline lowercase cursor-pointer">Size Guide</button>
+                <button
+                  onClick={() => {
+                    setOpenSections((prev) => ({ ...prev, size_guide: true }));
+                    setTimeout(() => {
+                      document.getElementById('product-accordions')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 50);
+                  }}
+                  className="text-[10px] text-neutral-500 hover:text-white underline lowercase cursor-pointer bg-transparent border-0 p-0"
+                >
+                  Size Guide
+                </button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map((sz) => {

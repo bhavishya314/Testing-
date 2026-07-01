@@ -19,6 +19,7 @@ import ShopPage, { Product, SHOP_PRODUCTS } from './components/ShopPage';
 import ProductDetails from './components/ProductDetails';
 import CartPage from './components/CartPage';
 import WishlistPage from './components/WishlistPage';
+import ContactPage from './components/ContactPage';
 
 const LUXURY_CATALOG = [
   { id: 'item-1', name: 'Maison Silk Slip Dress', price: 890, image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=300&auto=format&fit=crop', inStock: true },
@@ -37,7 +38,7 @@ export default function App() {
   const [highlightStyle, setHighlightStyle] = useState<HighlightStyle>('underline');
   const [announcementEnabled, setAnnouncementEnabled] = useState(true);
   const [simulatedScroll, setSimulatedScroll] = useState(false);
-  const [currentPage, setCurrentPage] = useState<'home' | 'shop' | 'details' | 'cart' | 'wishlist'>('home');
+  const [currentPage, setCurrentPage] = useState<'home' | 'shop' | 'details' | 'cart' | 'wishlist' | 'contact'>('home');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -65,7 +66,7 @@ export default function App() {
 
   // Handle navigation from internal items or navbar
   const handleNavigate = (
-    page: 'home' | 'shop' | 'details' | 'cart' | 'wishlist',
+    page: 'home' | 'shop' | 'details' | 'cart' | 'wishlist' | 'contact',
     category?: string | null,
     product?: Product | null,
     isPopState = false
@@ -285,7 +286,7 @@ export default function App() {
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenCart={() => handleNavigate('cart')}
         onOpenWishlist={() => handleNavigate('wishlist')}
-        currentPage={currentPage === 'home' ? 'home' : 'shop'}
+        currentPage={currentPage}
         onNavigate={handleNavigate}
       />
 
@@ -375,6 +376,12 @@ export default function App() {
             handleNavigate('details', null, p);
           }}
           onClearWishlist={() => setWishlist([])}
+        />
+      ) : currentPage === 'contact' ? (
+        <ContactPage
+          goldStyle={goldStyle}
+          onBackToHome={() => handleNavigate('home')}
+          onBackToShop={() => handleNavigate('shop')}
         />
       ) : (
         <ProductDetails

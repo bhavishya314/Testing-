@@ -5,7 +5,7 @@ import { GoldStyle } from '../types';
 
 interface FooterProps {
   goldStyle: GoldStyle;
-  onNavigate?: (page: 'home' | 'shop') => void;
+  onNavigate?: (page: 'home' | 'shop' | 'details' | 'cart' | 'wishlist' | 'contact', category?: string | null) => void;
 }
 
 export default function Footer({ goldStyle, onNavigate }: FooterProps) {
@@ -76,25 +76,19 @@ export default function Footer({ goldStyle, onNavigate }: FooterProps) {
             </h3>
             <ul className="space-y-3">
               {[
-                { name: 'Home', href: '#hero-section', target: 'home' as const },
-                { name: 'Shop', href: '#featured-products', target: 'shop' as const },
-                { name: 'About', href: '#why-shop-section', target: 'home' as const },
-                { name: 'Contact', href: '#newsletter-section', target: 'home' as const }
+                { name: 'Home', target: 'home' as const, category: null },
+                { name: 'Shop', target: 'shop' as const, category: null },
+                { name: 'Collections', target: 'shop' as const, category: null },
+                { name: 'Contact', target: 'contact' as const, category: null }
               ].map((link, idx) => (
                 <li key={idx}>
                   <a
                     id={`footer-quicklink-${link.name.toLowerCase()}`}
-                    href={link.href}
+                    href="#"
                     onClick={(e) => {
                       if (onNavigate) {
                         e.preventDefault();
-                        onNavigate(link.target);
-                        if (link.target === 'home') {
-                          setTimeout(() => {
-                            const elem = document.getElementById(link.href.slice(1));
-                            elem?.scrollIntoView({ behavior: 'smooth' });
-                          }, 100);
-                        }
+                        onNavigate(link.target, link.category);
                       }
                     }}
                     className={`font-sans text-xs text-neutral-400 font-light hover:pl-1.5 transition-all duration-300 flex items-center gap-1 group ${getGoldHover()}`}
@@ -107,23 +101,28 @@ export default function Footer({ goldStyle, onNavigate }: FooterProps) {
             </ul>
           </div>
 
-          {/* Column 3: Customer Support */}
+          {/* Column 3: Couture Categories */}
           <div id="footer-col-support" className="space-y-5">
             <h3 className="font-serif text-[11px] tracking-[0.3em] uppercase font-semibold text-neutral-300">
-              Customer Support
+              Couture Categories
             </h3>
             <ul className="space-y-3">
               {[
-                { name: 'FAQ', href: '#faq' },
-                { name: 'Shipping', href: '#shipping' },
-                { name: 'Returns', href: '#why-shop-section' },
-                { name: 'Privacy Policy', href: '#privacy' },
-                { name: 'Terms & Conditions', href: '#terms' }
+                { name: 'Ready to Wear', target: 'shop' as const, category: 'Ready-to-Wear' },
+                { name: 'Haute Couture', target: 'shop' as const, category: 'Haute Couture' },
+                { name: 'Cruise Collection', target: 'shop' as const, category: 'Cruise Collection' },
+                { name: 'Accessories', target: 'shop' as const, category: 'Accessories' }
               ].map((link, idx) => (
                 <li key={idx}>
                   <a
-                    id={`footer-supportlink-${link.name.toLowerCase().replace(/ & /g, '-').replace(/\s+/g, '-')}`}
-                    href={link.href}
+                    id={`footer-categorylink-${link.name.toLowerCase().replace(/\s+/g, '-')}`}
+                    href="#"
+                    onClick={(e) => {
+                      if (onNavigate) {
+                        e.preventDefault();
+                        onNavigate(link.target, link.category);
+                      }
+                    }}
                     className={`font-sans text-xs text-neutral-400 font-light hover:pl-1.5 transition-all duration-300 flex items-center gap-1 group ${getGoldHover()}`}
                   >
                     <span className="w-1 h-1 rounded-full bg-neutral-800 opacity-0 group-hover:opacity-100 transition-all duration-300" />
