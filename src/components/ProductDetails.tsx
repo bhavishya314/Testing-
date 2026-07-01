@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { GoldStyle, CartItem } from '../types';
 import { Product, SHOP_PRODUCTS, PRODUCT_COLORS } from './ShopPage';
+import { PRODUCT_VARIANTS } from '../data/productVariants';
 
 interface ProductDetailsProps {
   goldStyle: GoldStyle;
@@ -19,259 +20,6 @@ interface ProductDetailsProps {
   onSelectProduct: (product: Product) => void;
 }
 
-// Map high-quality alternate fashion images based on category or name
-const getProductGallery = (prod: Product): string[] => {
-  const baseImage = prod.image;
-  
-  // High-fashion details and alternate angles
-  const alternates: Record<string, string[]> = {
-    'dress': [
-      'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=600&auto=format&fit=crop'
-    ],
-    'outerwear': [
-      'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop'
-    ],
-    'accessories': [
-      'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop'
-    ],
-    'jewelry': [
-      'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600&auto=format&fit=crop'
-    ],
-    'footwear': [
-      'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=600&auto=format&fit=crop',
-      'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
-    ]
-  };
-
-  const lowerCat = prod.category.toLowerCase();
-  const lowerType = prod.type.toLowerCase();
-  const lowerName = prod.name.toLowerCase();
-
-  let selectedAlts = alternates.dress;
-
-  if (lowerCat.includes('jewelry') || lowerType.includes('ring') || lowerType.includes('choker')) {
-    selectedAlts = alternates.jewelry;
-  } else if (lowerCat.includes('accessories') || lowerType.includes('scarf') || lowerType.includes('bag') || lowerType.includes('hat') || lowerType.includes('tote')) {
-    selectedAlts = alternates.accessories;
-  } else if (lowerCat.includes('footwear') || lowerType.includes('boots') || lowerType.includes('loafers') || lowerType.includes('sneakers')) {
-    selectedAlts = alternates.footwear;
-  } else if (lowerCat.includes('outerwear') || lowerType.includes('coat') || lowerType.includes('jacket') || lowerType.includes('blazer') || lowerType.includes('trench')) {
-    selectedAlts = alternates.outerwear;
-  } else if (lowerName.includes('dress') || lowerName.includes('gown') || lowerName.includes('kaftan') || lowerType.includes('gown')) {
-    selectedAlts = alternates.dress;
-  }
-
-  return [baseImage, ...selectedAlts];
-};
-
-// Map high-quality color-specific fashion images based on category and selected color
-const getColorGallery = (prod: Product, color: string, defaultGallery: string[]): string[] => {
-  const lowerCat = prod.category.toLowerCase();
-  const lowerType = prod.type.toLowerCase();
-  const lowerName = prod.name.toLowerCase();
-
-  let fashionType: 'dress' | 'outerwear' | 'accessories' | 'jewelry' | 'footwear' = 'dress';
-
-  if (lowerCat.includes('jewelry') || lowerType.includes('ring') || lowerType.includes('choker')) {
-    fashionType = 'jewelry';
-  } else if (lowerCat.includes('accessories') || lowerType.includes('scarf') || lowerType.includes('bag') || lowerType.includes('hat') || lowerType.includes('tote') || lowerType.includes('duffle')) {
-    fashionType = 'accessories';
-  } else if (lowerCat.includes('footwear') || lowerType.includes('boots') || lowerType.includes('loafers') || lowerType.includes('sneakers')) {
-    fashionType = 'footwear';
-  } else if (lowerCat.includes('outerwear') || lowerType.includes('coat') || lowerType.includes('jacket') || lowerType.includes('blazer') || lowerType.includes('trench') || lowerType.includes('vest') || lowerType.includes('hoodie')) {
-    fashionType = 'outerwear';
-  }
-
-  const colorGalleries: Record<string, Record<string, string[]>> = {
-    dress: {
-      Black: [
-        'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop'
-      ],
-      White: [
-        'https://images.unsplash.com/photo-1549064492-6783177e07ca?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1566174053879-31528523f8ae?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1495385794356-15371f348c31?q=80&w=600&auto=format&fit=crop'
-      ],
-      Gold: [
-        'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1512436991641-6745cdb1723f?q=80&w=600&auto=format&fit=crop'
-      ],
-      Beige: [
-        'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop'
-      ],
-      Crimson: [
-        'https://images.unsplash.com/photo-1496747611176-843222e1e57c?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1518831959646-742c3a14ebf7?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?q=80&w=600&auto=format&fit=crop'
-      ],
-      Emerald: [
-        'https://images.unsplash.com/photo-1618932260643-eee4a2f6c9a6?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1595777457583-95e059d581b8?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop'
-      ],
-      Blue: [
-        'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop'
-      ],
-      Grey: [
-        'https://images.unsplash.com/photo-1485968579580-b6d095142e6e?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=600&auto=format&fit=crop'
-      ]
-    },
-    outerwear: {
-      Black: [
-        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop'
-      ],
-      Beige: [
-        'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop'
-      ],
-      Grey: [
-        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop'
-      ],
-      White: [
-        'https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop'
-      ],
-      Blue: [
-        'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop'
-      ],
-      Crimson: [
-        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop'
-      ],
-      Emerald: [
-        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop'
-      ],
-      Gold: [
-        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1544022613-e87ca75a784a?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=600&auto=format&fit=crop'
-      ]
-    },
-    accessories: {
-      Black: [
-        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop'
-      ],
-      Beige: [
-        'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop'
-      ],
-      White: [
-        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop'
-      ],
-      Gold: [
-        'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop'
-      ],
-      Blue: [
-        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop'
-      ],
-      Grey: [
-        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop'
-      ],
-      Emerald: [
-        'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1511556532299-8f662fc26c06?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=600&auto=format&fit=crop'
-      ]
-    },
-    jewelry: {
-      Gold: [
-        'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=600&auto=format&fit=crop'
-      ],
-      White: [
-        'https://images.unsplash.com/photo-1605100804763-247f67b3557e?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600&auto=format&fit=crop'
-      ],
-      Black: [
-        'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?q=80&w=600&auto=format&fit=crop'
-      ]
-    },
-    footwear: {
-      Black: [
-        'https://images.unsplash.com/photo-1608256246200-53e635b5b65f?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
-      ],
-      Beige: [
-        'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
-      ],
-      White: [
-        'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
-      ],
-      Gold: [
-        'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
-      ],
-      Grey: [
-        'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
-      ],
-      Blue: [
-        'https://images.unsplash.com/photo-1549298916-b41d501d3772?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?q=80&w=600&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1535043934128-cf0b28d52f95?q=80&w=600&auto=format&fit=crop'
-      ]
-    }
-  };
-
-  const gallery = colorGalleries[fashionType]?.[color];
-  if (gallery && gallery.length > 0) {
-    return gallery;
-  }
-
-  return defaultGallery;
-};
-
 export default function ProductDetails({
   goldStyle,
   product,
@@ -283,18 +31,44 @@ export default function ProductDetails({
   onSelectProduct
 }: ProductDetailsProps) {
   
-  const colors = useMemo(() => PRODUCT_COLORS[product.id] || ['Black', 'White', 'Gold'], [product.id]);
+  const colors = useMemo(() => {
+    const variants = PRODUCT_VARIANTS[product.id];
+    if (variants && variants.length > 0) {
+      return variants.map(v => v.color);
+    }
+    return PRODUCT_COLORS[product.id] || ['Black', 'White', 'Gold'];
+  }, [product.id]);
+
   const [selectedColor, setSelectedColor] = useState<string>(colors[0] || 'Black');
   
   const galleryImages = useMemo(() => {
-    const defaultGallery = getProductGallery(product);
-    if (selectedColor === colors[0]) {
+    const variants = PRODUCT_VARIANTS[product.id];
+    const defaultGallery = (variants && variants.length > 0 && variants[0].images && variants[0].images.length > 0)
+      ? variants[0].images
+      : [product.image];
+
+    if (!variants) {
       return defaultGallery;
     }
-    return getColorGallery(product, selectedColor, defaultGallery);
-  }, [product, selectedColor, colors]);
+
+    const currentVariant = variants.find(v => v.color === selectedColor);
+    if (currentVariant && currentVariant.images && currentVariant.images.length > 0) {
+      return currentVariant.images;
+    }
+
+    return defaultGallery;
+  }, [product, selectedColor]);
+
+  const selectedVariant = useMemo(() => {
+    const variants = PRODUCT_VARIANTS[product.id];
+    return variants?.find(v => v.color === selectedColor);
+  }, [product.id, selectedColor]);
+
+  const stockText = selectedVariant?.stockText || 'In Stock - Ready to Tailor';
 
   const [activeImage, setActiveImage] = useState<string>(product.image);
+  const [displayedImage, setDisplayedImage] = useState<string>(product.image);
+  const [imageOpacity, setImageOpacity] = useState<number>(1);
   const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0] || 'M');
   
   // Sync activeImage whenever galleryImages changes (due to product or color selection)
@@ -303,6 +77,57 @@ export default function ProductDetails({
       setActiveImage(galleryImages[0]);
     }
   }, [galleryImages]);
+
+  // Pre-preload all images in galleryImages to prevent thumbnail click flickering
+  React.useEffect(() => {
+    if (galleryImages && galleryImages.length > 0) {
+      galleryImages.forEach((imgUrl) => {
+        const img = new Image();
+        img.src = imgUrl;
+      });
+    }
+  }, [galleryImages]);
+
+  // Preload and transition effect
+  React.useEffect(() => {
+    if (!activeImage) return;
+    if (activeImage === displayedImage) return;
+
+    let isCancelled = false;
+
+    // Preload the target image
+    const img = new Image();
+    img.src = activeImage;
+    
+    img.onload = () => {
+      if (isCancelled) return;
+      
+      // Target image is loaded! Now do a smooth fade transition:
+      // 1. Fade out the current image (100ms)
+      setImageOpacity(0);
+      
+      setTimeout(() => {
+        if (isCancelled) return;
+        
+        // 2. Switch the source
+        setDisplayedImage(activeImage);
+        
+        // 3. Fade in the new image (100ms)
+        setImageOpacity(1);
+      }, 100); // 100ms fade-out
+    };
+
+    img.onerror = () => {
+      if (isCancelled) return;
+      // If variant images fail to load or are unavailable, gracefully fall back
+      // and continue displaying the current image!
+      console.warn("Variant image failed to load or is unavailable:", activeImage);
+    };
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [activeImage, displayedImage]);
 
   const [quantity, setQuantity] = useState<number>(1);
   const [isCopied, setIsCopied] = useState<boolean>(false);
@@ -313,13 +138,14 @@ export default function ProductDetails({
 
   // Update active image when product changes
   React.useEffect(() => {
+    setDisplayedImage(product.image);
     setActiveImage(product.image);
+    setImageOpacity(1);
     setSelectedSize(product.sizes[0] || 'M');
-    const prodColors = PRODUCT_COLORS[product.id] || ['Black', 'White', 'Gold'];
-    setSelectedColor(prodColors[0] || 'Black');
+    setSelectedColor(colors[0] || 'Black');
     setQuantity(1);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [product]);
+  }, [product, colors]);
 
   const getGoldColor = () => {
     if (goldStyle === 'champagne') return 'text-[#dfba73]';
@@ -354,7 +180,7 @@ export default function ProductDetails({
     const y = ((e.clientY - top) / height) * 100;
     setZoomStyle({
       display: 'block',
-      backgroundImage: `url(${activeImage})`,
+      backgroundImage: `url(${displayedImage})`,
       backgroundPosition: `${x}% ${y}%`,
       backgroundSize: '200%'
     });
@@ -451,15 +277,12 @@ export default function ProductDetails({
             onMouseLeave={handleMouseLeave}
           >
             {/* Standard display image */}
-            <motion.img 
-              key={activeImage}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.35, ease: 'easeOut' }}
-              src={activeImage} 
+            <img 
+              src={displayedImage} 
               alt={product.name}
               referrerPolicy="no-referrer"
-              className="w-full h-full object-cover object-center transition-transform duration-500 group-hover:opacity-0"
+              style={{ opacity: imageOpacity }}
+              className="w-full h-full object-cover object-center transition-opacity duration-150 group-hover:!opacity-0"
             />
             
             {/* Zoom display overlay */}
@@ -683,7 +506,7 @@ export default function ProductDetails({
                     +
                   </button>
                 </div>
-                <span className="text-[10px] font-sans text-neutral-500 italic">In Stock - Ready to Tailor</span>
+                <span className="text-[10px] font-sans text-neutral-500 italic">{stockText}</span>
               </div>
             </div>
           </div>
