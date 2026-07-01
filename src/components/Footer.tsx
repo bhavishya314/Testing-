@@ -38,7 +38,6 @@ export default function Footer({ goldStyle, onNavigate }: FooterProps) {
   return (
     <footer id="aurelia-luxury-footer" className="bg-[#030303] text-white pt-24 pb-12 px-6 md:px-12 relative overflow-hidden border-t border-neutral-900/40">
       {/* Subtle architectural background grids */}
-      <div className="absolute inset-0 bg-[radial-gradient(#ffffff01_1px,transparent_1px)] [background-size:32px_32px] opacity-50 pointer-events-none" />
       <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-neutral-950 rounded-full blur-[150px] opacity-20 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto relative z-10 space-y-16">

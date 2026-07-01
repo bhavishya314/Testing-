@@ -177,46 +177,12 @@ export default function LuxuryNavbar({
         className={`sticky top-0 z-40 w-full transition-all duration-500 ease-out py-4 md:py-5 ${styles.bg}`}
       >
         <div className="max-w-7xl mx-auto px-6 md:px-12">
-          {/* Main Flex Grid Wrapper */}
-          <div className="flex items-center justify-between relative h-10">
+          {/* ================= DESKTOP HEADER ================= */}
+          <div className="hidden md:flex items-center justify-between relative h-10">
             
-            {/* 1. Hamburger (Mobile only) - ALWAYS Left */}
-            <div className="flex md:hidden shrink-0">
-              <button
-                id="mobile-menu-trigger"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className={`p-2 -ml-2 rounded-full transition-colors duration-300 hover:bg-white/5 ${styles.text}`}
-                aria-label="Toggle navigation menu"
-              >
-                <AnimatePresence mode="wait">
-                  {mobileMenuOpen ? (
-                    <motion.div
-                      key="close"
-                      initial={{ rotate: -90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: 90, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <X className="w-5 h-5" />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="menu"
-                      initial={{ rotate: 90, opacity: 0 }}
-                      animate={{ rotate: 0, opacity: 1 }}
-                      exit={{ rotate: -90, opacity: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <Menu className="w-5 h-5" />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </button>
-            </div>
-
-            {/* 2. Left Aligned Layout */}
+            {/* 1. Left Aligned Layout */}
             {logoAlign === 'left' && (
-              <div className="hidden md:flex items-center gap-10">
+              <div className="flex items-center gap-10">
                 {/* Logo */}
                 <a
                   href="#"
@@ -329,9 +295,9 @@ export default function LuxuryNavbar({
               </div>
             )}
 
-            {/* 3. Center Aligned Layout */}
+            {/* 2. Center Aligned Layout */}
             {logoAlign === 'center' && (
-              <div className="hidden md:flex items-center gap-8 absolute left-0">
+              <div className="flex items-center gap-8 absolute left-0">
                 {MENU_ITEMS.map((item) => (
                   <div
                     key={item.name}
@@ -426,7 +392,7 @@ export default function LuxuryNavbar({
               </div>
             )}
 
-            {/* 4. Logo - Center Aligned Mode */}
+            {/* 3. Logo - Center Aligned Mode */}
             {logoAlign === 'center' && (
               <div className="absolute left-1/2 -translate-x-1/2 flex justify-center">
                 <a
@@ -445,26 +411,9 @@ export default function LuxuryNavbar({
               </div>
             )}
 
-            {/* 5. Logo - Fallback/Responsive for Mobile Center */}
-            {logoAlign === 'left' && (
-              <div className="flex md:hidden absolute left-1/2 -translate-x-1/2 justify-center">
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onNavigate?.('home');
-                  }}
-                  className={`font-serif tracking-[0.25em] text-xl font-bold transition-all duration-300 flex flex-col justify-center select-none ${getGoldColor()}`}
-                >
-                  <span>AURELIA</span>
-                </a>
-              </div>
-            )}
-
-            {/* 6. Utility Icons - ALWAYS Right */}
-            <div className="flex items-center gap-2 md:gap-4 shrink-0">
-              
-              {/* Optional Boutique Info Icon */}
+            {/* 4. Utility Icons (Desktop) */}
+            <div className="flex items-center gap-4 shrink-0 ml-auto">
+              {/* Boutique Info Icon */}
               <div className="hidden lg:flex items-center gap-1.5 pr-2 border-r border-neutral-900/10 dark:border-white/5 mr-2">
                 <MapPin className={`w-3.5 h-3.5 ${getGoldColor()}`} />
                 <span className={`font-sans text-[9px] tracking-widest text-neutral-400 font-light uppercase`}>
@@ -500,40 +449,169 @@ export default function LuxuryNavbar({
               <button
                 id="wishlist-trigger"
                 onClick={onOpenWishlist}
-                className={`p-2 rounded-full transition-all duration-300 hover:bg-neutral-950/5 dark:hover:bg-white/5 group relative ${styles.text}`}
+                className={`p-2 rounded-full transition-all duration-300 hover:bg-neutral-950/5 dark:hover:bg-white/5 group ${styles.text}`}
                 aria-label="Wishlist"
               >
-                <Heart className={`w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110 ${getGoldHoverColor()}`} />
-                {wishlistCount > 0 && (
-                  <motion.span
-                    id="wishlist-badge"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className={`absolute top-0.5 right-0.5 min-w-[15px] h-[15px] text-[8px] font-sans font-extrabold flex items-center justify-center rounded-full text-black shadow-lg ${getGoldBg()}`}
-                  >
-                    {wishlistCount}
-                  </motion.span>
-                )}
+                <div className="relative">
+                  <Heart className={`w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110 ${getGoldHoverColor()}`} />
+                  {wishlistCount > 0 && (
+                    <motion.span
+                      id="wishlist-badge"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className={`absolute -top-1.5 -right-1.5 min-w-[13px] h-[13px] px-0.5 text-[7px] font-sans font-extrabold flex items-center justify-center rounded-full text-black shadow-md ${getGoldBg()}`}
+                    >
+                      {wishlistCount}
+                    </motion.span>
+                  )}
+                </div>
               </button>
 
               {/* Cart Icon */}
               <button
                 id="cart-trigger"
                 onClick={onOpenCart}
-                className={`p-2 rounded-full transition-all duration-300 hover:bg-neutral-950/5 dark:hover:bg-white/5 group relative ${styles.text}`}
+                className={`p-2 rounded-full transition-all duration-300 hover:bg-neutral-950/5 dark:hover:bg-white/5 group ${styles.text}`}
                 aria-label="Shopping Cart"
               >
-                <ShoppingBag className={`w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110 ${getGoldHoverColor()}`} />
-                {cartCount > 0 && (
-                  <motion.span
-                    id="cart-badge"
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className={`absolute top-0.5 right-0.5 min-w-[15px] h-[15px] text-[8px] font-sans font-extrabold flex items-center justify-center rounded-full text-black shadow-lg ${getGoldBg()}`}
-                  >
-                    {cartCount}
-                  </motion.span>
+                <div className="relative">
+                  <ShoppingBag className={`w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110 ${getGoldHoverColor()}`} />
+                  {cartCount > 0 && (
+                    <motion.span
+                      id="cart-badge"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className={`absolute -top-1.5 -right-1.5 min-w-[13px] h-[13px] px-0.5 text-[7px] font-sans font-extrabold flex items-center justify-center rounded-full text-black shadow-md ${getGoldBg()}`}
+                    >
+                      {cartCount}
+                    </motion.span>
+                  )}
+                </div>
+              </button>
+            </div>
+
+          </div>
+
+          {/* ================= MOBILE HEADER ================= */}
+          <div className="flex md:hidden items-center justify-between relative h-10 w-full">
+            
+            {/* 1. Hamburger menu & Theme Toggle - ALWAYS Left */}
+            <div className="flex items-center justify-start gap-1 z-10 w-1/4 min-w-[70px]">
+              <button
+                id="mobile-menu-trigger"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className={`p-1.5 -ml-1.5 rounded-full transition-colors duration-300 hover:bg-white/5 ${styles.text}`}
+                aria-label="Toggle navigation menu"
+              >
+                <AnimatePresence mode="wait">
+                  {mobileMenuOpen ? (
+                    <motion.div
+                      key="close"
+                      initial={{ rotate: -90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: 90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <X className="w-[18px] h-[18px]" />
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="menu"
+                      initial={{ rotate: 90, opacity: 0 }}
+                      animate={{ rotate: 0, opacity: 1 }}
+                      exit={{ rotate: -90, opacity: 0 }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <Menu className="w-[18px] h-[18px]" />
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </button>
+
+              {/* Theme Toggle */}
+              <button
+                id="theme-toggle-mobile"
+                onClick={toggleTheme}
+                className={`p-1.5 rounded-full transition-all duration-300 hover:bg-neutral-950/5 dark:hover:bg-white/5 group relative ${styles.text}`}
+                aria-label={globalTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+              >
+                {globalTheme === 'dark' ? (
+                  <Sun className={`w-[18px] h-[18px] transition-transform duration-500 hover:rotate-45 ${getGoldHoverColor()}`} />
+                ) : (
+                  <Moon className={`w-[18px] h-[18px] transition-transform duration-500 hover:-rotate-12 ${getGoldHoverColor()}`} />
                 )}
+              </button>
+            </div>
+
+            {/* 2. Logo - ALWAYS Perfectly Centered on Mobile */}
+            <div className="absolute left-1/2 -translate-x-1/2 z-0 flex flex-col items-center justify-center pointer-events-none">
+              <a
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onNavigate?.('home');
+                }}
+                className={`font-serif tracking-[0.22em] text-lg sm:text-xl font-bold transition-all duration-300 flex flex-col justify-center select-none pointer-events-auto ${getGoldColor()}`}
+              >
+                <span>AURELIA</span>
+              </a>
+            </div>
+
+            {/* 3. Utility Icons - ALWAYS Right */}
+            <div className="flex items-center justify-end gap-1.5 z-10 w-1/4 min-w-[85px]">
+              
+              {/* Search Icon */}
+              <button
+                id="search-trigger-mobile"
+                onClick={onOpenSearch}
+                className={`p-1.5 rounded-full transition-all duration-300 hover:bg-neutral-950/5 dark:hover:bg-white/5 group relative ${styles.text}`}
+                aria-label="Search"
+              >
+                <Search className={`w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110 ${getGoldHoverColor()}`} />
+              </button>
+
+              {/* Wishlist Icon */}
+              <button
+                id="wishlist-trigger-mobile"
+                onClick={onOpenWishlist}
+                className={`p-1.5 rounded-full transition-all duration-300 hover:bg-neutral-950/5 dark:hover:bg-white/5 group ${styles.text}`}
+                aria-label="Wishlist"
+              >
+                <div className="relative">
+                  <Heart className={`w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110 ${getGoldHoverColor()}`} />
+                  {wishlistCount > 0 && (
+                    <motion.span
+                      id="wishlist-badge-mobile"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className={`absolute -top-1.5 -right-1.5 min-w-[13px] h-[13px] px-0.5 text-[7px] font-sans font-extrabold flex items-center justify-center rounded-full text-black shadow-md ${getGoldBg()}`}
+                    >
+                      {wishlistCount}
+                    </motion.span>
+                  )}
+                </div>
+              </button>
+
+              {/* Cart Icon */}
+              <button
+                id="cart-trigger-mobile"
+                onClick={onOpenCart}
+                className={`p-1.5 rounded-full transition-all duration-300 hover:bg-neutral-950/5 dark:hover:bg-white/5 group ${styles.text}`}
+                aria-label="Shopping Cart"
+              >
+                <div className="relative">
+                  <ShoppingBag className={`w-[18px] h-[18px] transition-transform duration-300 group-hover:scale-110 ${getGoldHoverColor()}`} />
+                  {cartCount > 0 && (
+                    <motion.span
+                      id="cart-badge-mobile"
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className={`absolute -top-1.5 -right-1.5 min-w-[13px] h-[13px] px-0.5 text-[7px] font-sans font-extrabold flex items-center justify-center rounded-full text-black shadow-md ${getGoldBg()}`}
+                    >
+                      {cartCount}
+                    </motion.span>
+                  )}
+                </div>
               </button>
             </div>
 

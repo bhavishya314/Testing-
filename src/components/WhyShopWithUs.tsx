@@ -69,7 +69,6 @@ export default function WhyShopWithUs({ goldStyle }: WhyShopWithUsProps) {
   return (
     <section id="why-shop-section" className="py-24 px-6 md:px-12 bg-[#050505] text-white relative overflow-hidden">
       {/* Decorative vector grid elements */}
-      <div className="absolute inset-0 bg-[radial-gradient(#ffffff03_1px,transparent_1px)] [background-size:24px_24px] opacity-60 pointer-events-none" />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-neutral-950 rounded-full blur-[160px] opacity-25 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto space-y-16 relative z-10">

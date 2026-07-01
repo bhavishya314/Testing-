@@ -55,9 +55,6 @@ export default function HeroSection({ goldStyle, onShopClick, onExploreClick }: 
       className="relative w-full h-[calc(100vh-100px)] min-h-[650px] lg:h-[calc(100vh-76px)] flex items-stretch overflow-hidden bg-[#050505] text-white"
     >
       {/* Absolute Decorative Background Elements */}
-      <div className="absolute top-0 left-1/4 w-[1px] h-full bg-neutral-950 pointer-events-none" />
-      <div className="absolute top-0 left-2/4 w-[1px] h-full bg-neutral-950 pointer-events-none" />
-      <div className="absolute top-0 left-3/4 w-[1px] h-full bg-neutral-950 pointer-events-none" />
       
       {/* Radial ambient glow in bottom left corner */}
       <div className="absolute bottom-0 left-0 w-[45vw] h-[45vw] bg-neutral-950 rounded-full blur-[140px] opacity-40 pointer-events-none" />
@@ -139,24 +136,6 @@ export default function HeroSection({ goldStyle, onShopClick, onExploreClick }: 
 
           </div>
 
-          {/* Quick Stats/Brand Details at the very bottom left */}
-          <div className="absolute bottom-8 left-6 md:left-16 hidden lg:flex items-center gap-12 text-[10px] tracking-[0.2em] uppercase font-sans text-neutral-500 font-light">
-            <div>
-              <span className="block text-neutral-600 mb-0.5">Origin</span>
-              <span className="text-neutral-400">Atelier Paris</span>
-            </div>
-            <div className="w-[1px] h-6 bg-neutral-900" />
-            <div>
-              <span className="block text-neutral-600 mb-0.5">Sourcing</span>
-              <span className="text-neutral-400">100% Organic</span>
-            </div>
-            <div className="w-[1px] h-6 bg-neutral-900" />
-            <div>
-              <span className="block text-neutral-600 mb-0.5">Couture</span>
-              <span className="text-neutral-400">Limited Run</span>
-            </div>
-          </div>
-
         </div>
 
         {/* RIGHT COLUMN: Premium Fashion Editorial Image with Scroll Parallax */}
@@ -180,16 +159,6 @@ export default function HeroSection({ goldStyle, onShopClick, onExploreClick }: 
           {/* Luxury dark gradient overlay with subtle gold edge glow */}
           <div className="absolute inset-0 bg-gradient-to-r from-black via-transparent to-transparent pointer-events-none lg:block hidden" />
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent pointer-events-none" />
-
-          {/* Golden Ambient Overlay Ring (Adds luxury depth) */}
-          <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full border border-[#c5a880]/15 pointer-events-none blur-sm" />
-          <div className="absolute -bottom-16 -right-16 w-[400px] h-[400px] rounded-full border border-[#c5a880]/5 pointer-events-none blur-md" />
-
-          {/* Dynamic Model Coordinates Info Label */}
-          <div className="absolute bottom-6 right-6 md:bottom-12 md:right-12 text-right space-y-1 font-sans text-[9px] tracking-widest text-neutral-400 uppercase font-light z-10 select-none bg-black/40 backdrop-blur-md px-3 py-2 rounded border border-neutral-900/40">
-            <span className="block text-neutral-500">Maison Silhouette Model 04</span>
-            <span className={`block font-serif ${getGoldColor()}`}>AURELIA Autumn 2026</span>
-          </div>
 
         </div>
 

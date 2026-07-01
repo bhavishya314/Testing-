@@ -56,7 +56,6 @@ export default function Newsletter({ goldStyle }: NewsletterProps) {
       <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-neutral-900/60 to-transparent" />
       
       {/* Intricate premium circular grid line background */}
-      <div className="absolute inset-0 bg-[radial-gradient(#ffffff02_1px,transparent_1px)] [background-size:32px_32px] opacity-40 pointer-events-none" />
       <div className="absolute -bottom-48 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-neutral-950 rounded-full blur-[180px] opacity-30 pointer-events-none" />
 
       <div className="max-w-4xl mx-auto relative z-10 text-center">
