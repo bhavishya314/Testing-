@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useTheme } from '../ThemeContext';
 import { 
   Star, Heart, ShoppingBag, Share2, ArrowLeft, Check, 
   MessageCircle, Truck, RefreshCw, ShieldCheck, ChevronDown, 
@@ -10,6 +11,7 @@ import { Product, SHOP_PRODUCTS, PRODUCT_COLORS } from './ShopPage';
 import { PRODUCT_VARIANTS } from '../data/productVariants';
 
 interface ProductDetailsProps {
+  theme?: string;
   goldStyle: GoldStyle;
   product: Product;
   wishlistIds: string[];
@@ -21,6 +23,7 @@ interface ProductDetailsProps {
 }
 
 export default function ProductDetails({
+  theme = 'dark',
   goldStyle,
   product,
   wishlistIds,
@@ -31,42 +34,82 @@ export default function ProductDetails({
   onSelectProduct
 }: ProductDetailsProps) {
   
+  const { theme: globalTheme } = useTheme();
+  const isLight = globalTheme === 'light';
+
+  // Safe fallback product values to prevent any rendering crash if product is partially populated (e.g. from Wishlist)
+  const safeSizes = useMemo(() => product?.sizes || ['XS', 'S', 'M', 'L', 'XL'], [product?.sizes]);
+  const safeDetails = useMemo(() => product?.details || ['100% Organic Materials', 'Premium Craftsmanship', 'Exclusive Limited Edition', 'Handcrafted in France'], [product?.details]);
+  const safeDescription = product?.description || 'An exquisite masterwork of fine tailoring and handcrafted styling.';
+  const safeRating = product?.rating || 5;
+  const safeReviews = product?.reviews || 24;
+  const safeCategory = product?.category || 'Ready-to-Wear';
+  const safeGender = product?.gender || 'Women';
+  const safeName = product?.name || 'AURELIA Haute Couture Item';
+  const safePrice = product?.price || 0;
+  const safeImage = product?.image || 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=300&auto=format&fit=crop';
+  const safeOriginalPrice = product?.originalPrice;
+  const safeBadge = product?.badge;
+  const safeId = product?.id || 'unknown';
+
   const colors = useMemo(() => {
-    const variants = PRODUCT_VARIANTS[product.id];
+    const variants = PRODUCT_VARIANTS[safeId];
     if (variants && variants.length > 0) {
       return variants.map(v => v.color);
     }
-    return PRODUCT_COLORS[product.id] || ['Black', 'White', 'Gold'];
-  }, [product.id]);
+    return PRODUCT_COLORS[safeId] || ['Black', 'White', 'Gold'];
+  }, [safeId]);
 
   const [selectedColor, setSelectedColor] = useState<string>(colors[0] || 'Black');
   
-  // The gallery must ONLY use the current product's default image/gallery.
-  // It is completely decoupled from color selection.
+  // Return the selected variant's images or fall back to the main product image
   const galleryImages = useMemo(() => {
-    return [product.image];
-  }, [product.id, product.image]);
+    const variants = PRODUCT_VARIANTS[safeId];
+    if (!variants) {
+      return [safeImage];
+    }
+    const currentVariant = variants.find(v => v.color === selectedColor);
+    if (currentVariant && currentVariant.images && currentVariant.images.length > 0) {
+      return currentVariant.images;
+    }
+    return [safeImage];
+  }, [safeId, safeImage, selectedColor]);
 
   const selectedVariant = useMemo(() => {
-    const variants = PRODUCT_VARIANTS[product.id];
+    const variants = PRODUCT_VARIANTS[safeId];
     return variants?.find(v => v.color === selectedColor);
-  }, [product.id, selectedColor]);
+  }, [safeId, selectedColor]);
 
   const stockText = selectedVariant?.stockText || 'In Stock - Ready to Tailor';
 
-  const [activeImage, setActiveImage] = useState<string>(product.image);
-  const [displayedImage, setDisplayedImage] = useState<string>(product.image);
+  const [activeImage, setActiveImage] = useState<string>(safeImage);
+  const [displayedImage, setDisplayedImage] = useState<string>(safeImage);
   const [imageOpacity, setImageOpacity] = useState<number>(1);
-  const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0] || 'M');
+  const [selectedSize, setSelectedSize] = useState<string>(safeSizes[0] || 'M');
   
-  // Sync activeImage whenever galleryImages changes (due to product changes only)
+  // Sync activeImage whenever galleryImages changes (due to product or color selection)
   React.useEffect(() => {
     if (galleryImages && galleryImages.length > 0) {
       setActiveImage(galleryImages[0]);
     }
   }, [galleryImages]);
 
-  // Pre-preload all images in galleryImages
+  // Preload all variant images of the active product so color transitions are instant
+  React.useEffect(() => {
+    const variants = PRODUCT_VARIANTS[safeId];
+    if (variants) {
+      variants.forEach((variant) => {
+        if (variant.images) {
+          variant.images.forEach((imgUrl) => {
+            const img = new Image();
+            img.src = imgUrl;
+          });
+        }
+      });
+    }
+  }, [safeId]);
+
+  // Pre-preload all images in current galleryImages
   React.useEffect(() => {
     if (galleryImages && galleryImages.length > 0) {
       galleryImages.forEach((imgUrl) => {
@@ -109,7 +152,6 @@ export default function ProductDetails({
       if (isCancelled) return;
       // If variant images fail to load or are unavailable, gracefully fall back
       // and continue displaying the current image!
-      console.warn("Variant image failed to load or is unavailable:", activeImage);
     };
 
     return () => {
@@ -126,23 +168,31 @@ export default function ProductDetails({
 
   // Update active image when product changes
   React.useEffect(() => {
-    const productVariants = PRODUCT_VARIANTS[product.id];
+    const productVariants = PRODUCT_VARIANTS[safeId];
     const availableColors = (productVariants && productVariants.length > 0)
       ? productVariants.map(v => v.color)
-      : (PRODUCT_COLORS[product.id] || ['Black', 'White', 'Gold']);
+      : (PRODUCT_COLORS[safeId] || ['Black', 'White', 'Gold']);
     
     const defaultColor = availableColors[0] || 'Black';
+    
+    let initialImage = safeImage;
+    if (productVariants && productVariants.length > 0) {
+      const firstVariant = productVariants.find(v => v.color === defaultColor);
+      if (firstVariant && firstVariant.images && firstVariant.images.length > 0) {
+        initialImage = firstVariant.images[0];
+      }
+    }
 
     setSelectedColor(defaultColor);
-    setDisplayedImage(product.image);
-    setActiveImage(product.image);
+    setDisplayedImage(initialImage);
+    setActiveImage(initialImage);
     setImageOpacity(1);
-    setSelectedSize(product.sizes[0] || 'M');
+    setSelectedSize(safeSizes[0] || 'M');
     setQuantity(1);
     setZoomStyle({ display: 'none' });
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [product.id, product.image]);
+  }, [safeId, safeImage, safeSizes]);
 
   const getGoldColor = () => {
     if (goldStyle === 'champagne') return 'text-[#dfba73]';
@@ -168,7 +218,7 @@ export default function ProductDetails({
     return 'hover:shadow-[0_0_20px_rgba(197,168,128,0.4)]';
   };
 
-  const isWishlisted = wishlistIds.includes(product.id);
+  const isWishlisted = wishlistIds.includes(safeId);
 
   // Zoom feature coordinates calculation
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -196,9 +246,9 @@ export default function ProductDetails({
   };
 
   const handleWhatsApp = () => {
-    const text = `Hello AURELIA, I would like to purchase the following masterpiece:\n\n*${product.name}*\nBrand: AURELIA\nCategory: ${product.category}\nSize: ${selectedSize}\nColor: ${selectedColor}\nQuantity: ${quantity}\nPrice: $${(product.price * quantity).toLocaleString()}\n\nPlease advise on custom styling or tailoring availability!`;
+    const text = `Hello AURELIA, I would like to purchase the following masterpiece:\n\n*${safeName}*\nBrand: AURELIA\nCategory: ${safeCategory}\nSize: ${selectedSize}\nColor: ${selectedColor}\nQuantity: ${quantity}\nPrice: $${(safePrice * quantity).toLocaleString()}\n\nPlease advise on custom styling or tailoring availability!`;
     const encodedText = encodeURIComponent(text);
-    window.open(`https://wa.me/1234567890?text=${encodedText}`, '_blank');
+    window.open(`https://wa.me/33180059000?text=${encodedText}`, '_blank');
   };
 
   const toggleSection = (sectionId: string) => {
@@ -211,9 +261,9 @@ export default function ProductDetails({
   // 4 Related Products of similar category or gender
   const relatedProducts = useMemo(() => {
     return SHOP_PRODUCTS
-      .filter((p) => p.id !== product.id && (p.category === product.category || p.gender === product.gender))
+      .filter((p) => p.id !== safeId && (p.category === safeCategory || p.gender === safeGender))
       .slice(0, 4);
-  }, [product]);
+  }, [safeId, safeCategory, safeGender]);
 
   // Premium pre-baked reviews list
   const reviewData = useMemo(() => {
@@ -240,25 +290,33 @@ export default function ProductDetails({
   }, []);
 
   return (
-    <div id="product-details-view" className="min-h-screen bg-[#050505] text-white pt-24 pb-16">
+    <div id="product-details-view" className={`min-h-screen pt-24 pb-16 transition-all duration-700 ease-in-out ${
+      isLight 
+        ? 'bg-[#faf9f6] text-neutral-900' 
+        : 'bg-[#050505] text-white'
+    }`}>
       
       {/* Breadcrumbs & Navigation Back */}
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-4 flex items-center justify-between">
         <button 
           id="product-back-button"
           onClick={onBack}
-          className="group flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-[0.25em] text-neutral-400 hover:text-white transition-colors duration-300 cursor-pointer"
+          className={`group flex items-center gap-2 text-[10px] font-sans font-bold uppercase tracking-[0.25em] transition-colors duration-300 cursor-pointer ${
+            isLight ? 'text-neutral-500 hover:text-black' : 'text-neutral-400 hover:text-white'
+          }`}
         >
           <ArrowLeft className="w-3.5 h-3.5 transition-transform group-hover:-translate-x-1 duration-300" />
           Back to collection
         </button>
         
-        <div className="hidden sm:flex items-center gap-2 text-[9px] font-sans text-neutral-500 uppercase tracking-widest">
-          <span className="hover:text-white transition-colors cursor-pointer" onClick={onBack}>Shop</span>
+        <div className={`hidden sm:flex items-center gap-2 text-[9px] font-sans uppercase tracking-widest ${
+          isLight ? 'text-neutral-400' : 'text-neutral-500'
+        }`}>
+          <span className={`transition-colors cursor-pointer ${isLight ? 'hover:text-black' : 'hover:text-white'}`} onClick={onBack}>Shop</span>
           <span>/</span>
-          <span>{product.category}</span>
+          <span>{safeCategory}</span>
           <span>/</span>
-          <span className={getGoldColor()}>{product.name}</span>
+          <span className={getGoldColor()}>{safeName}</span>
         </div>
       </div>
 
@@ -269,14 +327,16 @@ export default function ProductDetails({
           {/* Main Display Image */}
           <div 
             id="main-image-viewport"
-            className="relative bg-neutral-950 aspect-[4/5] border border-neutral-900/60 overflow-hidden cursor-zoom-in group rounded-sm"
+            className={`relative aspect-[4/5] border overflow-hidden cursor-zoom-in group rounded-sm ${
+              isLight ? 'bg-[#f5f5f3] border-neutral-200' : 'bg-neutral-950 border-neutral-900/60'
+            }`}
             onMouseMove={handleMouseMove}
             onMouseLeave={handleMouseLeave}
           >
             {/* Standard display image */}
             <img 
               src={displayedImage} 
-              alt={product.name}
+              alt={safeName}
               referrerPolicy="no-referrer"
               style={{ opacity: imageOpacity }}
               className="w-full h-full object-cover object-center transition-opacity duration-150 group-hover:!opacity-0"
@@ -289,18 +349,18 @@ export default function ProductDetails({
             />
 
             {/* Discount / Special Badges */}
-            {product.originalPrice && (
+            {safeOriginalPrice && (
               <span className="absolute top-4 left-4 bg-red-950/80 text-red-400 border border-red-900/30 px-3 py-1 text-[8px] font-sans font-bold tracking-[0.2em] uppercase rounded-sm">
-                -{Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)}% Off
+                -{Math.round(((safeOriginalPrice - safePrice) / safeOriginalPrice) * 100)}% Off
               </span>
             )}
-            {!product.originalPrice && product.badge && (
+            {!safeOriginalPrice && safeBadge && (
               <span className={`absolute top-4 left-4 border px-3 py-1 text-[8px] font-sans font-bold tracking-[0.2em] uppercase rounded-sm ${
-                product.badge === 'NEW' 
+                safeBadge === 'NEW' 
                   ? `${getGoldColor()} border-neutral-800 bg-black/80` 
                   : 'bg-black/80 border-neutral-800 text-neutral-300'
               }`}>
-                {product.badge}
+                {safeBadge}
               </span>
             )}
           </div>
@@ -313,15 +373,17 @@ export default function ProductDetails({
                 <button
                   key={idx}
                   onClick={() => setActiveImage(img)}
-                  className={`relative shrink-0 w-20 md:w-24 aspect-[4/5] bg-neutral-950 border rounded-sm overflow-hidden transition-all duration-300 hover:opacity-100 cursor-pointer ${
+                  className={`relative shrink-0 w-20 md:w-24 aspect-[4/5] border rounded-sm overflow-hidden transition-all duration-300 hover:opacity-100 cursor-pointer ${
+                    isLight ? 'bg-[#f5f5f3]' : 'bg-neutral-950'
+                  } ${
                     isActive 
-                      ? 'border-white/90 ring-1 ring-white/25 scale-102 opacity-100' 
-                      : 'border-neutral-900 opacity-60'
+                      ? (isLight ? 'border-neutral-900 ring-1 ring-neutral-400 scale-102 opacity-100' : 'border-white/90 ring-1 ring-white/25 scale-102 opacity-100')
+                      : (isLight ? 'border-neutral-200 opacity-60' : 'border-neutral-900 opacity-60')
                   }`}
                 >
                   <img 
                     src={img} 
-                    alt={`${product.name} thumbnail ${idx + 1}`} 
+                    alt={`${safeName} thumbnail ${idx + 1}`} 
                     referrerPolicy="no-referrer"
                     className="w-full h-full object-cover object-center"
                   />
@@ -340,13 +402,15 @@ export default function ProductDetails({
               <span className="text-[10px] font-sans font-extrabold tracking-[0.3em] text-neutral-500 uppercase">
                 AURELIA COUTURE
               </span>
-              <span className="text-[10px] font-sans text-neutral-400 tracking-wider">
-                Ref: {product.id.toUpperCase()}
+              <span className={`text-[10px] font-sans tracking-wider ${isLight ? 'text-neutral-500' : 'text-neutral-400'}`}>
+                Ref: {safeId.toUpperCase()}
               </span>
             </div>
 
-            <h1 className="font-serif text-2xl md:text-3xl lg:text-4xl tracking-wide text-neutral-100 leading-tight">
-              {product.name}
+            <h1 className={`font-serif text-2xl md:text-3xl lg:text-4xl tracking-wide leading-tight ${
+              isLight ? 'text-neutral-900' : 'text-neutral-100'
+            }`}>
+              {safeName}
             </h1>
 
             {/* Ratings Summary */}
@@ -355,60 +419,66 @@ export default function ProductDetails({
                 {[...Array(5)].map((_, i) => (
                   <Star 
                     key={i} 
-                    className={`w-3.5 h-3.5 ${i < Math.floor(product.rating) ? 'fill-current' : 'text-neutral-800'}`} 
+                    className={`w-3.5 h-3.5 ${i < Math.floor(safeRating) ? 'fill-current' : (isLight ? 'text-neutral-300' : 'text-neutral-800')}`} 
                   />
                 ))}
-                <span className="font-sans text-[11px] font-medium text-neutral-300 ml-1">
-                  {product.rating.toFixed(1)}
+                <span className={`font-sans text-[11px] font-medium ml-1 ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>
+                  {safeRating.toFixed(1)}
                 </span>
               </div>
-              <span className="h-3 w-px bg-neutral-800" />
+              <span className={`h-3 w-px ${isLight ? 'bg-neutral-200' : 'bg-neutral-800'}`} />
               <button 
                 onClick={() => {
                   setOpenSections((prev) => ({ ...prev, reviews: true }));
                   setTimeout(() => {
-                    document.getElementById('product-accordions')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                     document.getElementById('product-accordions')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
                   }, 50);
                 }} 
-                className="font-sans text-[10px] text-neutral-400 hover:text-white underline cursor-pointer bg-transparent border-0 p-0"
+                className={`font-sans text-[10px] underline cursor-pointer bg-transparent border-0 p-0 ${
+                  isLight ? 'text-neutral-500 hover:text-black' : 'text-neutral-400 hover:text-white'
+                }`}
               >
-                {product.reviews} customer reviews
+                {safeReviews} customer reviews
               </button>
             </div>
 
             {/* Pricing Tag */}
             <div className="flex items-baseline gap-4 pt-2">
               <span className={`font-serif text-2xl md:text-3xl ${getGoldColor()} font-medium`}>
-                ${product.price.toLocaleString()}
+                ${safePrice.toLocaleString()}
               </span>
-              {product.originalPrice && (
+              {safeOriginalPrice && (
                 <>
                   <span className="font-serif text-sm text-neutral-500 line-through">
-                    ${product.originalPrice.toLocaleString()}
+                    ${safeOriginalPrice.toLocaleString()}
                   </span>
                   <span className="text-[10px] font-sans text-emerald-400 bg-emerald-950/40 border border-emerald-900/30 px-2 py-0.5 rounded-sm">
-                    Save ${(product.originalPrice - product.price).toLocaleString()}
+                    Save ${(safeOriginalPrice - safePrice).toLocaleString()}
                   </span>
                 </>
               )}
             </div>
 
             {/* Short Description */}
-            <p className="font-sans text-xs md:text-sm text-neutral-400 font-light leading-relaxed">
-              {product.description}
+            <p className={`font-sans text-xs md:text-sm font-light leading-relaxed ${isLight ? 'text-neutral-600' : 'text-neutral-400'}`}>
+              {safeDescription}
             </p>
           </div>
 
           {/* Dynamic Configuration Selectors */}
-          <div className="space-y-6 pt-4 border-t border-neutral-900/60">
+          <div className={`space-y-6 pt-4 border-t ${isLight ? 'border-neutral-200' : 'border-neutral-900/60'}`}>
             {/* Color Option Selector */}
             <div className="space-y-2.5">
-              <div className="flex justify-between items-center text-[11px] font-sans uppercase tracking-[0.2em] text-neutral-400">
-                <span>Color: <strong className="text-white font-normal">{selectedColor}</strong></span>
+              <div className={`flex justify-between items-center text-[11px] font-sans uppercase tracking-[0.2em] ${isLight ? 'text-neutral-500' : 'text-neutral-400'}`}>
+                <span>Color: <strong className={`font-normal ${isLight ? 'text-black' : 'text-white'}`}>{selectedColor}</strong></span>
               </div>
               <div className="flex flex-wrap gap-2.5">
                 {colors.map((color) => {
                   const isColorActive = selectedColor === color;
+                  const variant = PRODUCT_VARIANTS[safeId]?.find(v => v.color === color);
+                  const hasImages = PRODUCT_VARIANTS[safeId]
+                    ? !!(variant && variant.images && variant.images.length > 0)
+                    : true;
                   
                   // Map name to real elegant hex colors for custom visual circles
                   const colorMap: Record<string, string> = {
@@ -426,14 +496,21 @@ export default function ProductDetails({
                   return (
                     <button
                       key={color}
-                      onClick={() => setSelectedColor(color)}
-                      className={`w-7 h-7 rounded-full cursor-pointer transition-all duration-300 relative border flex items-center justify-center ${
-                        isColorActive 
-                          ? 'border-white scale-110 shadow-[0_0_12px_rgba(255,255,255,0.25)]' 
-                          : 'border-neutral-900 hover:border-neutral-700'
+                      disabled={!hasImages}
+                      onClick={() => {
+                        if (hasImages) {
+                          setSelectedColor(color);
+                        }
+                      }}
+                      className={`w-7 h-7 rounded-full transition-all duration-300 relative border flex items-center justify-center ${
+                        !hasImages
+                          ? 'opacity-30 cursor-not-allowed border-dashed border-neutral-700'
+                          : isColorActive 
+                            ? (isLight ? 'border-black scale-110 shadow-[0_0_12px_rgba(0,0,0,0.15)] cursor-pointer' : 'border-white scale-110 shadow-[0_0_12px_rgba(255,255,255,0.25)] cursor-pointer')
+                            : (isLight ? 'border-neutral-200 hover:border-neutral-400 cursor-pointer' : 'border-neutral-900 hover:border-neutral-700 cursor-pointer')
                       }`}
                       style={{ backgroundColor: hex }}
-                      title={color}
+                      title={color + (!hasImages ? ' (Unavailable)' : '')}
                       aria-label={`Select color ${color}`}
                     >
                       {isColorActive && (
@@ -447,8 +524,8 @@ export default function ProductDetails({
 
             {/* Size Option Selector */}
             <div className="space-y-2.5">
-              <div className="flex justify-between items-center text-[11px] font-sans uppercase tracking-[0.2em] text-neutral-400">
-                <span>Size: <strong className="text-white font-normal">{selectedSize}</strong></span>
+              <div className={`flex justify-between items-center text-[11px] font-sans uppercase tracking-[0.2em] ${isLight ? 'text-neutral-500' : 'text-neutral-400'}`}>
+                <span>Size: <strong className={`font-normal ${isLight ? 'text-black' : 'text-white'}`}>{selectedSize}</strong></span>
                 <button
                   onClick={() => {
                     setOpenSections((prev) => ({ ...prev, size_guide: true }));
@@ -462,7 +539,7 @@ export default function ProductDetails({
                 </button>
               </div>
               <div className="flex flex-wrap gap-2">
-                {product.sizes.map((sz) => {
+                {safeSizes.map((sz) => {
                   const isSizeActive = selectedSize === sz;
                   return (
                     <button
@@ -471,7 +548,9 @@ export default function ProductDetails({
                       className={`min-w-[42px] height-[40px] px-3 py-2 text-[10px] font-sans font-bold uppercase tracking-widest rounded-sm border transition-all duration-300 cursor-pointer ${
                         isSizeActive
                           ? `${getGoldBg()} border-transparent text-black font-semibold scale-102`
-                          : 'bg-neutral-950 text-neutral-400 border-neutral-900 hover:text-white hover:border-neutral-800'
+                          : (isLight 
+                            ? 'bg-white text-neutral-600 border-neutral-200 hover:text-black hover:border-neutral-400' 
+                            : 'bg-neutral-950 text-neutral-400 border-neutral-900 hover:text-white hover:border-neutral-800')
                       }`}
                     >
                       {sz}
@@ -483,22 +562,28 @@ export default function ProductDetails({
 
             {/* Quantity Selector */}
             <div className="space-y-2.5">
-              <span className="text-[11px] font-sans uppercase tracking-[0.2em] text-neutral-400">Quantity</span>
+              <span className={`text-[11px] font-sans uppercase tracking-[0.2em] ${isLight ? 'text-neutral-500' : 'text-neutral-400'}`}>Quantity</span>
               <div className="flex items-center gap-3">
-                <div className="flex items-center bg-neutral-950 border border-neutral-900 rounded-sm">
+                <div className={`flex items-center rounded-sm border ${
+                  isLight ? 'bg-white border-neutral-200' : 'bg-neutral-950 border-neutral-900'
+                }`}>
                   <button 
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                     disabled={quantity <= 1}
-                    className="px-3.5 py-2 text-neutral-500 hover:text-white disabled:opacity-30 disabled:hover:text-neutral-500 transition-colors duration-300 cursor-pointer font-bold"
+                    className={`px-3.5 py-2 disabled:opacity-30 transition-colors duration-300 cursor-pointer font-bold ${
+                      isLight ? 'text-neutral-500 hover:text-black disabled:hover:text-neutral-500' : 'text-neutral-500 hover:text-white disabled:hover:text-neutral-500'
+                    }`}
                   >
                     -
                   </button>
-                  <span className="px-4 font-mono text-xs w-10 text-center text-neutral-200">
+                  <span className={`px-4 font-mono text-xs w-10 text-center ${isLight ? 'text-neutral-800' : 'text-neutral-200'}`}>
                     {quantity}
                   </span>
                   <button 
                     onClick={() => setQuantity(quantity + 1)}
-                    className="px-3.5 py-2 text-neutral-500 hover:text-white transition-colors duration-300 cursor-pointer font-bold"
+                    className={`px-3.5 py-2 transition-colors duration-300 cursor-pointer font-bold ${
+                      isLight ? 'text-neutral-500 hover:text-black' : 'text-neutral-500 hover:text-white'
+                    }`}
                   >
                     +
                   </button>
@@ -509,7 +594,7 @@ export default function ProductDetails({
           </div>
 
           {/* Elite Order Buttons Tray */}
-          <div className="space-y-3.5 pt-6 border-t border-neutral-900/60">
+          <div className={`space-y-3.5 pt-6 border-t ${isLight ? 'border-neutral-200' : 'border-neutral-900/60'}`}>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
               
               {/* Add to Cart Action */}
@@ -519,9 +604,9 @@ export default function ProductDetails({
                   // Multiply quantity inside add mechanism
                   for (let i = 0; i < quantity; i++) {
                     onAddToCart({
-                      id: product.id,
-                      name: product.name,
-                      price: product.price,
+                      id: safeId,
+                      name: safeName,
+                      price: safePrice,
                       image: activeImage,
                       size: selectedSize,
                       color: selectedColor,
@@ -539,17 +624,21 @@ export default function ProductDetails({
                 id="details-toggle-wishlist"
                 onClick={() => {
                   if (isWishlisted) {
-                    onRemoveFromWishlist(product.id);
+                    onRemoveFromWishlist(safeId);
                   } else {
                     onAddToWishlist({
-                      id: product.id,
-                      name: product.name,
-                      price: product.price,
-                      image: product.image
+                      id: safeId,
+                      name: safeName,
+                      price: safePrice,
+                      image: safeImage
                     });
                   }
                 }}
-                className="w-full py-3.5 bg-neutral-950 hover:bg-neutral-900 border border-neutral-900 rounded-sm text-[10px] font-sans font-bold tracking-[0.25em] uppercase flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer text-neutral-300 hover:text-white"
+                className={`w-full py-3.5 border rounded-sm text-[10px] font-sans font-bold tracking-[0.25em] uppercase flex items-center justify-center gap-2 transition-all duration-300 cursor-pointer ${
+                  isLight 
+                    ? 'bg-white hover:bg-neutral-50 border-neutral-200 text-neutral-700 hover:text-black' 
+                    : 'bg-neutral-950 hover:bg-neutral-900 border-neutral-900 text-neutral-300 hover:text-white'
+                }`}
               >
                 <Heart className={`w-4 h-4 transition-colors duration-300 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} />
                 {isWishlisted ? 'Wishlisted' : 'Add to Wishlist'}
@@ -593,7 +682,7 @@ export default function ProductDetails({
           </div>
 
           {/* Quick trust metrics */}
-          <div className="grid grid-cols-3 gap-2 py-4 border-y border-neutral-900/60 text-center text-neutral-500 text-[9px] font-sans uppercase tracking-[0.15em] pt-4 mt-2">
+          <div className="grid grid-cols-3 gap-2 py-4 border-y border-neutral-900/60 text-center text-neutral-500 text-[8px] sm:text-[9px] font-sans uppercase tracking-wider sm:tracking-[0.15em] pt-4 mt-2">
             <div className="flex flex-col items-center gap-1.5">
               <Truck className={`w-4 h-4 ${getGoldColor()}`} />
               <span>FedEx Priority</span>
@@ -612,20 +701,22 @@ export default function ProductDetails({
       </main>
 
       {/* Collapsible Accordions: Product Details, Care Instructions, Shipping & Returns, Customer Reviews, Size Guide */}
-      <section id="product-accordions" className="max-w-4xl mx-auto px-6 md:px-12 py-12 border-t border-neutral-900/60 mt-12">
-        <div className="divide-y divide-neutral-900/60">
+      <section id="product-accordions" className={`max-w-4xl mx-auto px-6 md:px-12 py-12 border-t mt-12 ${
+        isLight ? 'border-neutral-200' : 'border-neutral-900/60'
+      }`}>
+        <div className={`divide-y ${isLight ? 'divide-neutral-200' : 'divide-neutral-900/60'}`}>
           {[
             {
               id: 'details',
               title: 'Product Details',
               content: (
-                <div className="text-neutral-400 font-sans text-xs md:text-sm leading-relaxed space-y-4">
-                  <p className="text-neutral-300 font-light">{product.description}</p>
+                <div className={`font-sans text-xs md:text-sm leading-relaxed space-y-4 ${isLight ? 'text-neutral-600' : 'text-neutral-400'}`}>
+                  <p className={`font-light ${isLight ? 'text-neutral-700' : 'text-neutral-300'}`}>{safeDescription}</p>
                   <div className="space-y-3">
-                    <h4 className="font-serif text-xs md:text-sm text-neutral-200 tracking-wider uppercase">Couture Highlights</h4>
+                    <h4 className={`font-serif text-xs md:text-sm tracking-wider uppercase ${isLight ? 'text-neutral-800' : 'text-neutral-200'}`}>Couture Highlights</h4>
                     <ul className="grid grid-cols-1 md:grid-cols-2 gap-y-2 gap-x-6">
-                      {product.details.map((detail, index) => (
-                        <li key={index} className="flex items-start gap-2.5 text-neutral-400">
+                      {safeDetails.map((detail, index) => (
+                        <li key={index} className={`flex items-start gap-2.5 ${isLight ? 'text-neutral-600' : 'text-neutral-400'}`}>
                           <Check className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${getGoldColor()}`} />
                           <span>{detail}</span>
                         </li>
@@ -639,8 +730,8 @@ export default function ProductDetails({
               id: 'care',
               title: 'Care Instructions',
               content: (
-                <div className="text-neutral-400 font-sans text-xs md:text-sm leading-relaxed space-y-4">
-                  <p className="text-neutral-400 font-light">
+                <div className={`font-sans text-xs md:text-sm leading-relaxed space-y-4 ${isLight ? 'text-neutral-600' : 'text-neutral-400'}`}>
+                  <p className="font-light">
                     AURELIA prioritizes high-altitude raw material sourcing under strict ecological oversight. To preserve the structure, weave complexity, and natural silk proteins or premium cashmere loft, we recommend dry cleaning under mild, certified organic green solvents only. Avoid machine tumbling or steam iron exposure.
                   </p>
                   <div className="flex items-center gap-2.5 text-[10px] text-amber-500 bg-amber-950/20 border border-amber-900/30 px-3.5 py-2.5 rounded-sm">
@@ -654,12 +745,12 @@ export default function ProductDetails({
               id: 'shipping',
               title: 'Shipping & Returns',
               content: (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-neutral-400 font-sans text-xs md:text-sm leading-relaxed font-light">
+                <div className={`grid grid-cols-1 md:grid-cols-2 gap-8 font-sans text-xs md:text-sm leading-relaxed font-light ${isLight ? 'text-neutral-600' : 'text-neutral-400'}`}>
                   <div className="space-y-3">
-                    <h4 className="font-serif text-xs md:text-sm text-neutral-200 tracking-wider uppercase">
+                    <h4 className={`font-serif text-xs md:text-sm tracking-wider uppercase ${isLight ? 'text-neutral-800' : 'text-neutral-200'}`}>
                       Complimentary Global Shipping
                     </h4>
-                    <p className="text-neutral-400">
+                    <p className={isLight ? 'text-neutral-600' : 'text-neutral-400'}>
                       Every Aurelia creation is meticulously packaged by hand in our signature climate-regulated linen boxes. We offer complimentary insured FedEx Express or DHL Priority shipping worldwide.
                     </p>
                     <ul className="space-y-1 text-neutral-500">
@@ -670,10 +761,10 @@ export default function ProductDetails({
                   </div>
 
                   <div className="space-y-3">
-                    <h4 className="font-serif text-xs md:text-sm text-neutral-200 tracking-wider uppercase">
+                    <h4 className={`font-serif text-xs md:text-sm tracking-wider uppercase ${isLight ? 'text-neutral-800' : 'text-neutral-200'}`}>
                       Artisan Return & Exchange Loop
                     </h4>
-                    <p className="text-neutral-400">
+                    <p className={isLight ? 'text-neutral-600' : 'text-neutral-400'}>
                       If your masterpiece does not fit precisely to your stature, we invite you to initiate an effortless complimentary exchange or return within 30 days of shipment receipt. 
                     </p>
                     <p className="text-neutral-500">
@@ -685,14 +776,16 @@ export default function ProductDetails({
             },
             {
               id: 'reviews',
-              title: `Customer Reviews (${product.reviews})`,
+              title: `Customer Reviews (${safeReviews})`,
               content: (
                 <div className="space-y-6">
                   {/* Visual Reviews breakdown panel */}
-                  <div className="bg-neutral-950/60 border border-neutral-900 p-6 md:p-8 rounded-sm grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                  <div className={`p-6 md:p-8 rounded-sm grid grid-cols-1 md:grid-cols-3 gap-6 items-center border ${
+                    isLight ? 'bg-white border-neutral-200' : 'bg-neutral-950/60 border-neutral-900'
+                  }`}>
                     <div className="text-center space-y-1">
-                      <div className="font-serif text-4xl md:text-5xl tracking-tight text-white font-medium">
-                        {product.rating.toFixed(1)}
+                      <div className={`font-serif text-4xl md:text-5xl tracking-tight font-medium ${isLight ? 'text-black' : 'text-white'}`}>
+                        {safeRating.toFixed(1)}
                       </div>
                       <div className="flex items-center justify-center gap-0.5 text-amber-500 py-1">
                         {[...Array(5)].map((_, i) => (
@@ -700,7 +793,7 @@ export default function ProductDetails({
                         ))}
                       </div>
                       <p className="text-[10px] font-sans text-neutral-500 uppercase tracking-widest">
-                        Based on {product.reviews} Master reviews
+                        Based on {safeReviews} Master reviews
                       </p>
                     </div>
 
@@ -712,9 +805,9 @@ export default function ProductDetails({
                         { stars: 2, pct: 0 },
                         { stars: 1, pct: 0 }
                       ].map((row) => (
-                        <div key={row.stars} className="flex items-center gap-3 text-[10px] font-sans text-neutral-400">
+                        <div key={row.stars} className={`flex items-center gap-3 text-[10px] font-sans ${isLight ? 'text-neutral-600' : 'text-neutral-400'}`}>
                           <span className="w-12 text-right">{row.stars} Stars</span>
-                          <div className="flex-1 bg-neutral-900 h-1.5 rounded-full overflow-hidden">
+                          <div className={`flex-1 h-1.5 rounded-full overflow-hidden ${isLight ? 'bg-neutral-100' : 'bg-neutral-900'}`}>
                             <div 
                               className={`h-full ${
                                 goldStyle === 'champagne' ? 'bg-[#dfba73]' : goldStyle === 'bright' ? 'bg-[#ffd700]' : 'bg-[#c5a880]'
@@ -731,7 +824,9 @@ export default function ProductDetails({
                   {/* Individual reviews stack */}
                   <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2 no-scrollbar">
                     {reviewData.map((review, idx) => (
-                      <div key={idx} className="bg-neutral-950/40 border border-neutral-900 p-5 rounded-sm space-y-3">
+                      <div key={idx} className={`p-5 rounded-sm space-y-3 border ${
+                        isLight ? 'bg-white border-neutral-200' : 'bg-neutral-950/40 border-neutral-900'
+                      }`}>
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="flex items-center gap-0.5 text-amber-500 mb-1">
@@ -739,7 +834,7 @@ export default function ProductDetails({
                                 <Star key={i} className="w-3 h-3 fill-current" />
                               ))}
                             </div>
-                            <h4 className="font-serif text-sm tracking-wide text-neutral-100">
+                            <h4 className={`font-serif text-sm tracking-wide ${isLight ? 'text-neutral-900' : 'text-neutral-100'}`}>
                               {review.title}
                             </h4>
                           </div>
@@ -751,13 +846,17 @@ export default function ProductDetails({
                           </div>
                         </div>
 
-                        <p className="font-sans text-xs md:text-sm text-neutral-400 leading-relaxed font-light">
+                        <p className={`font-sans text-xs md:text-sm leading-relaxed font-light ${isLight ? 'text-neutral-600' : 'text-neutral-400'}`}>
                           {review.text}
                         </p>
 
-                        <div className="flex items-center justify-between text-[9px] font-sans text-neutral-500 pt-2 border-t border-neutral-900/50">
+                        <div className={`flex items-center justify-between text-[9px] font-sans text-neutral-500 pt-2 border-t ${
+                          isLight ? 'border-neutral-200' : 'border-neutral-900/50'
+                        }`}>
                           <span>Posted on {review.date}</span>
-                          <button className="hover:text-white transition-colors duration-300 cursor-pointer bg-transparent border-0 p-0 text-[9px]">
+                          <button className={`hover:text-white transition-colors duration-300 cursor-pointer bg-transparent border-0 p-0 text-[9px] ${
+                            isLight ? 'hover:text-black text-neutral-500' : 'hover:text-white text-neutral-400'
+                          }`}>
                             Was this helpful? ({review.helpfulness})
                           </button>
                         </div>
@@ -773,16 +872,18 @@ export default function ProductDetails({
               content: (
                 <div className="space-y-4">
                   <div className="overflow-x-auto">
-                    <table className="w-full text-left font-sans text-xs text-neutral-400 border-collapse">
+                    <table className={`w-full text-left font-sans text-xs border-collapse ${isLight ? 'text-neutral-600' : 'text-neutral-400'}`}>
                       <thead>
-                        <tr className="border-b border-neutral-900 text-neutral-200 uppercase tracking-wider text-[10px]">
+                        <tr className={`border-b uppercase tracking-wider text-[10px] ${
+                          isLight ? 'border-neutral-200 text-neutral-800' : 'border-neutral-900 text-neutral-200'
+                        }`}>
                           <th className="py-3 px-4 font-serif">Size</th>
                           <th className="py-3 px-4 font-serif">Bust / Chest</th>
                           <th className="py-3 px-4 font-serif">Waist</th>
                           <th className="py-3 px-4 font-serif">Hips</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-neutral-900/50">
+                      <tbody className={`divide-y ${isLight ? 'divide-neutral-100' : 'divide-neutral-900/50'}`}>
                         {[
                           { size: 'XS', bust: '32" - 33" (81-84 cm)', waist: '24" - 25" (61-64 cm)', hips: '34" - 35" (86-89 cm)' },
                           { size: 'S', bust: '34" - 35" (86-89 cm)', waist: '26" - 27" (66-69 cm)', hips: '36" - 37" (91-94 cm)' },
@@ -790,8 +891,8 @@ export default function ProductDetails({
                           { size: 'L', bust: '38" - 40" (96-101 cm)', waist: '30" - 32" (76-81 cm)', hips: '40" - 42" (101-106 cm)' },
                           { size: 'XL', bust: '41" - 43" (104-109 cm)', waist: '33" - 35" (84-89 cm)', hips: '43" - 45" (109-114 cm)' }
                         ].map((row) => (
-                          <tr key={row.size} className="hover:bg-neutral-950/40 transition-colors">
-                            <td className="py-3 px-4 font-serif font-bold text-white">{row.size}</td>
+                          <tr key={row.size} className={`transition-colors ${isLight ? 'hover:bg-neutral-50' : 'hover:bg-neutral-950/40'}`}>
+                            <td className={`py-3 px-4 font-serif font-bold ${isLight ? 'text-black' : 'text-white'}`}>{row.size}</td>
                             <td className="py-3 px-4">{row.bust}</td>
                             <td className="py-3 px-4">{row.waist}</td>
                             <td className="py-3 px-4">{row.hips}</td>
@@ -812,12 +913,16 @@ export default function ProductDetails({
               <div key={section.id} className="py-2">
                 <button
                   onClick={() => toggleSection(section.id)}
-                  className="w-full flex items-center justify-between py-4 text-left hover:text-white transition-colors cursor-pointer group"
+                  className={`w-full flex items-center justify-between py-4 text-left transition-colors cursor-pointer group ${
+                    isLight ? 'hover:text-black' : 'hover:text-white'
+                  }`}
                 >
-                  <span className="font-serif text-[12px] md:text-sm tracking-[0.2em] uppercase text-neutral-300 group-hover:text-white transition-colors duration-300">
+                  <span className={`font-serif text-[12px] md:text-sm tracking-[0.2em] uppercase transition-colors duration-300 ${
+                    isLight ? 'text-neutral-700 group-hover:text-black' : 'text-neutral-300 group-hover:text-white'
+                  }`}>
                     {section.title}
                   </span>
-                  <span className="text-neutral-500 group-hover:text-white transition-colors duration-300">
+                  <span className="text-neutral-500 group-hover:text-neutral-400 transition-colors duration-300">
                     {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </span>
                 </button>
@@ -849,12 +954,16 @@ export default function ProductDetails({
 
       {/* Related Products Grid */}
       {relatedProducts.length > 0 && (
-        <section id="related-products-section" className="max-w-7xl mx-auto px-6 md:px-12 py-12 border-t border-neutral-900/60 mt-12">
+        <section id="related-products-section" className={`max-w-7xl mx-auto px-6 md:px-12 py-12 border-t mt-12 ${
+          isLight ? 'border-neutral-200' : 'border-neutral-900/60'
+        }`}>
           <div className="text-center space-y-2 mb-12">
             <span className={`font-serif text-[10px] tracking-[0.4em] uppercase ${getGoldColor()}`}>
               Curated Selection
             </span>
-            <h2 className="font-serif text-xl md:text-2xl tracking-widest text-neutral-100 uppercase">
+            <h2 className={`font-serif text-xl md:text-2xl tracking-widest uppercase ${
+              isLight ? 'text-neutral-900' : 'text-neutral-100'
+            }`}>
               You May Also Admire
             </h2>
           </div>
@@ -865,11 +974,15 @@ export default function ProductDetails({
               return (
                 <div 
                   key={p.id}
-                  className="group block bg-neutral-950 border border-neutral-900 hover:border-neutral-800 transition-all duration-500 rounded-sm overflow-hidden"
+                  className={`group block transition-all duration-500 rounded-sm overflow-hidden border ${
+                    isLight ? 'bg-white border-neutral-200 hover:border-neutral-300' : 'bg-neutral-950 border-neutral-900 hover:border-neutral-800'
+                  }`}
                 >
                   <div 
                     onClick={() => onSelectProduct(p)}
-                    className="relative aspect-[4/5] bg-neutral-950 overflow-hidden cursor-pointer"
+                    className={`relative aspect-[4/5] overflow-hidden cursor-pointer ${
+                      isLight ? 'bg-[#f5f5f3]' : 'bg-neutral-950'
+                    }`}
                   >
                     <img 
                       src={p.image} 
@@ -884,7 +997,9 @@ export default function ProductDetails({
                     <span className="text-[8px] font-sans text-neutral-500 uppercase tracking-widest block">{p.category}</span>
                     <h3 
                       onClick={() => onSelectProduct(p)}
-                      className="font-serif text-[11px] md:text-[12px] text-neutral-200 hover:text-white uppercase truncate cursor-pointer transition-colors duration-300"
+                      className={`font-serif text-[11px] md:text-[12px] uppercase truncate cursor-pointer transition-colors duration-300 ${
+                        isLight ? 'text-neutral-800 hover:text-black' : 'text-neutral-200 hover:text-white'
+                      }`}
                     >
                       {p.name}
                     </h3>
@@ -894,7 +1009,9 @@ export default function ProductDetails({
                       </span>
                       <button 
                         onClick={() => onSelectProduct(p)}
-                        className="text-[9px] font-sans font-bold text-neutral-400 hover:text-white uppercase tracking-widest transition-colors duration-300 cursor-pointer"
+                        className={`text-[9px] font-sans font-bold uppercase tracking-widest transition-colors duration-300 cursor-pointer ${
+                          isLight ? 'text-neutral-500 hover:text-black' : 'text-neutral-400 hover:text-white'
+                        }`}
                       >
                         Details →
                       </button>

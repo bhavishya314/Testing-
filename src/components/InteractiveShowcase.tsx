@@ -338,7 +338,7 @@ export default function InteractiveShowcase({
                 A study on Italian structured knitwear, silk georgette slips, and heritage brass hardware.
               </p>
               <button
-                id="view-collection-mock"
+                id="view-collection-request"
                 className={`inline-block border text-[9px] font-sans font-bold tracking-[0.25em] uppercase px-5 py-2.5 transition-all duration-300 mt-2 ${getGoldBorder()} ${getGoldColor()}`}
               >
                 Request Access

@@ -6,9 +6,10 @@ import { GoldStyle } from '../types';
 interface FooterProps {
   goldStyle: GoldStyle;
   onNavigate?: (page: 'home' | 'shop' | 'details' | 'cart' | 'wishlist' | 'contact', category?: string | null) => void;
+  onOpenPolicy?: (type: 'privacy' | 'terms' | 'returns') => void;
 }
 
-export default function Footer({ goldStyle, onNavigate }: FooterProps) {
+export default function Footer({ goldStyle, onNavigate, onOpenPolicy }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
   const getGoldColor = () => {
@@ -144,20 +145,20 @@ export default function Footer({ goldStyle, onNavigate }: FooterProps) {
                   <Mail className={`w-4 h-4 shrink-0 mt-0.5 ${getGoldColor()}`} />
                   <a
                     id="footer-contact-email"
-                    href="mailto:concierge@aurelia.com"
+                    href="mailto:concierge@aureliacouture.com"
                     className="font-sans text-xs text-neutral-400 font-light hover:text-white transition-colors"
                   >
-                    concierge@aurelia.com
+                    concierge@aureliacouture.com
                   </a>
                 </li>
                 <li className="flex items-start gap-3">
                   <Phone className={`w-4 h-4 shrink-0 mt-0.5 ${getGoldColor()}`} />
                   <a
                     id="footer-contact-phone"
-                    href="tel:+33140205050"
+                    href="tel:+33180059000"
                     className="font-sans text-xs text-neutral-400 font-light hover:text-white transition-colors"
                   >
-                    +33 (0) 1 40 20 50 50
+                    +33 (0) 1 80 05 90 00
                   </a>
                 </li>
                 <li className="flex items-start gap-3">
@@ -179,7 +180,7 @@ export default function Footer({ goldStyle, onNavigate }: FooterProps) {
                   {
                     name: 'Instagram',
                     id: 'footer-social-instagram',
-                    href: 'https://instagram.com',
+                    href: 'https://instagram.com/aurelia.couture',
                     svg: (
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         <rect width="20" height="20" x="2" y="2" rx="5" ry="5"/>
@@ -190,7 +191,7 @@ export default function Footer({ goldStyle, onNavigate }: FooterProps) {
                   {
                     name: 'Facebook',
                     id: 'footer-social-facebook',
-                    href: 'https://facebook.com',
+                    href: 'https://facebook.com/aurelia.couture',
                     svg: (
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                         <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
@@ -200,7 +201,7 @@ export default function Footer({ goldStyle, onNavigate }: FooterProps) {
                   {
                     name: 'X',
                     id: 'footer-social-x',
-                    href: 'https://twitter.com',
+                    href: 'https://x.com/aurelia_couture',
                     svg: (
                       <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -210,7 +211,7 @@ export default function Footer({ goldStyle, onNavigate }: FooterProps) {
                   {
                     name: 'Pinterest',
                     id: 'footer-social-pinterest',
-                    href: 'https://pinterest.com',
+                    href: 'https://pinterest.com/aurelia_couture',
                     svg: (
                       <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.42 7.63 11.18-.1-.95-.19-2.4.04-3.43.21-.93 1.37-5.83 1.37-5.83s-.35-.7-.35-1.74c0-1.63.95-2.85 2.13-2.85 1 0 1.49.75 1.49 1.66 0 1.01-.64 2.52-.97 3.92-.28 1.17.58 2.13 1.73 2.13 2.08 0 3.68-2.19 3.68-5.35 0-2.8-2.01-4.75-4.87-4.75-3.32 0-5.27 2.49-5.27 5.06 0 1 .39 2.08.87 2.67.1.1.11.2.08.31-.09.38-.3 1.23-.34 1.4-.06.23-.19.28-.43.17-1.61-.75-2.62-3.11-2.62-5.01 0-4.08 2.97-7.83 8.55-7.83 4.49 0 7.98 3.2 7.98 7.48 0 4.46-2.81 8.05-6.71 8.05-1.31 0-2.54-.68-2.96-1.48l-.81 3.08c-.29 1.12-1.09 2.53-1.63 3.4C8.94 23.82 10.43 24 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0z"/>
@@ -244,10 +245,17 @@ export default function Footer({ goldStyle, onNavigate }: FooterProps) {
         </div>
 
         {/* Bottom Section: Copyright and Credits */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
           <p id="footer-copyright" className="font-sans text-[10px] text-neutral-500 font-light tracking-wide">
             &copy; {currentYear} AURELIA S.A. All rights reserved.
           </p>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 font-sans text-[10px] text-neutral-500 font-light">
+            <span onClick={() => onOpenPolicy?.('privacy')} className="hover:text-white transition-colors cursor-pointer">Privacy Policy</span>
+            <span className="text-neutral-800">•</span>
+            <span onClick={() => onOpenPolicy?.('terms')} className="hover:text-white transition-colors cursor-pointer">Terms of Service</span>
+            <span className="text-neutral-800">•</span>
+            <span onClick={() => onOpenPolicy?.('returns')} className="hover:text-white transition-colors cursor-pointer">Return Policy</span>
+          </div>
           <div className="flex items-center gap-1.5 font-sans text-[10px] text-neutral-500 font-light">
             <span>Designed with</span>
             <span className={`text-red-500 transition-transform duration-300 hover:scale-125 cursor-default`} aria-hidden="true">❤️</span>

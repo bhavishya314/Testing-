@@ -27,7 +27,7 @@ interface FeaturedProductsProps {
   onProductClick?: (product: any) => void;
 }
 
-const PRODUCTS: Product[] = [
+export const PRODUCTS: Product[] = [
   {
     id: 'item-1',
     name: 'Maison Silk Slip Dress',

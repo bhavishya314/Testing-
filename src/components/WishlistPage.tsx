@@ -332,7 +332,7 @@ export default function WishlistPage({
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="fixed top-[20%] left-[50%] translate-x-[-50%] z-50 w-full max-w-md bg-[#0d0d0d] border border-neutral-900 text-white rounded-md p-6 shadow-2xl space-y-6"
+              className="fixed top-[15%] left-[5%] right-[5%] md:left-[50%] md:translate-x-[-50%] md:translate-y-0 z-50 w-[90%] md:w-full md:max-w-md bg-[#0d0d0d] border border-neutral-900 text-white rounded-md p-5 sm:p-6 shadow-2xl space-y-6"
             >
               {/* Header */}
               <div className="flex justify-between items-start">

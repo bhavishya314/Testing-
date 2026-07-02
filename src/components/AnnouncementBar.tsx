@@ -68,7 +68,7 @@ export default function AnnouncementBar({ goldStyle, isEnabled }: AnnouncementBa
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: -15, opacity: 0 }}
               transition={{ duration: 0.35, ease: 'easeInOut' }}
-              className="font-medium inline-block text-[9px] md:text-[10px] tracking-[0.25em]"
+              className="font-medium inline-block text-[7px] sm:text-[9px] md:text-[10px] tracking-wider sm:tracking-[0.25em]"
             >
               {MESSAGES[currentIdx]}
             </motion.span>

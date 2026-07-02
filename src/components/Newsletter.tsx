@@ -5,9 +5,10 @@ import { GoldStyle } from '../types';
 
 interface NewsletterProps {
   goldStyle: GoldStyle;
+  onOpenPolicy?: (type: 'privacy' | 'terms' | 'returns') => void;
 }
 
-export default function Newsletter({ goldStyle }: NewsletterProps) {
+export default function Newsletter({ goldStyle, onOpenPolicy }: NewsletterProps) {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -175,7 +176,7 @@ export default function Newsletter({ goldStyle }: NewsletterProps) {
           {/* Privacy footer */}
           <div className="space-y-1.5 max-w-sm mx-auto pt-2">
             <p className="font-sans text-[10px] text-neutral-500 font-light leading-relaxed">
-              By subscribing, you agree to our <span className="text-neutral-400 underline cursor-pointer hover:text-neutral-300">Privacy Policy</span> and consent to receive our promotional newsletters.
+              By subscribing, you agree to our <span onClick={() => onOpenPolicy?.('privacy')} className="text-neutral-400 underline cursor-pointer hover:text-neutral-300">Privacy Policy</span> and consent to receive our promotional newsletters.
             </p>
             <p className="font-sans text-[9px] text-neutral-600 font-light">
               You can unsubscribe at any time. Secure unsubscribe link provided in every drop.

@@ -147,7 +147,7 @@ export default function CartPage({
 
   // WhatsApp Purchase link builder
   const handleWhatsAppBuy = () => {
-    const phone = '15550199'; // Simulated boutique number
+    const phone = '33180059000'; // Aurelia direct boutique concierge number
     let text = `*AURELIA COUTURE ORDER OVERVIEW*\n`;
     text += `Hello Aurelia Concierge, I would like to place an order for the following items:\n\n`;
     
@@ -641,7 +641,7 @@ export default function CartPage({
                           <input
                             required
                             type="email"
-                            placeholder="prestige@aurelia.com"
+                            placeholder="prestige.client@aureliacouture.com"
                             value={shippingForm.email}
                             onChange={(e) => setShippingForm({ ...shippingForm, email: e.target.value })}
                             className="w-full pl-10 pr-4 py-2 text-xs font-sans bg-black border border-neutral-800 rounded-sm focus:outline-none focus:border-neutral-500 transition-colors"
@@ -686,7 +686,7 @@ export default function CartPage({
                         <input
                           required
                           type="text"
-                          placeholder="Fifth Avenue Manhattan Apartment 4B"
+                          placeholder="721 Fifth Avenue, Penthouse B"
                           value={shippingForm.address}
                           onChange={(e) => setShippingForm({ ...shippingForm, address: e.target.value })}
                           className="w-full px-4 py-2 text-xs font-sans bg-black border border-neutral-800 rounded-sm focus:outline-none focus:border-neutral-500 transition-colors"

@@ -98,7 +98,7 @@ export default function ContactPage({ goldStyle, onBackToHome, onBackToShop }: C
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
               {/* WhatsApp (Instant Private chat) */}
               <a
-                href="https://wa.me/33140205050?text=Hello%20Aurelia%20Concierge"
+                href="https://wa.me/33180059000?text=Hello%20Aurelia%20Concierge"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="group p-5 rounded-lg bg-neutral-950/60 border border-neutral-900 hover:border-emerald-500/30 transition-all duration-300 flex items-start gap-4"
@@ -121,7 +121,7 @@ export default function ContactPage({ goldStyle, onBackToHome, onBackToShop }: C
 
               {/* Private Email */}
               <a
-                href="mailto:concierge@aurelia.com"
+                href="mailto:concierge@aureliacouture.com"
                 className="group p-5 rounded-lg bg-neutral-950/60 border border-neutral-900 hover:border-amber-500/30 transition-all duration-300 flex items-start gap-4"
               >
                 <div className={`p-3 rounded-full bg-neutral-900 border border-neutral-800 ${getGoldColor()} group-hover:bg-white group-hover:text-black transition-all duration-300`}>
@@ -132,7 +132,7 @@ export default function ContactPage({ goldStyle, onBackToHome, onBackToShop }: C
                     Private Concierge Email
                   </h3>
                   <p className="font-sans text-[11px] text-neutral-400 font-light">
-                    concierge@aurelia.com
+                    concierge@aureliacouture.com
                   </p>
                   <span className="inline-block font-sans text-[9px] text-neutral-500 tracking-wider font-semibold uppercase pt-1">
                     Guaranteed Same-day Response
@@ -142,7 +142,7 @@ export default function ContactPage({ goldStyle, onBackToHome, onBackToShop }: C
 
               {/* Voice Assistance */}
               <a
-                href="tel:+33140205050"
+                href="tel:+33180059000"
                 className="group p-5 rounded-lg bg-neutral-950/60 border border-neutral-900 hover:border-blue-500/30 transition-all duration-300 flex items-start gap-4"
               >
                 <div className="p-3 rounded-full bg-neutral-900 border border-neutral-800 text-blue-400 group-hover:bg-blue-500 group-hover:text-black transition-all duration-300">
@@ -153,7 +153,7 @@ export default function ContactPage({ goldStyle, onBackToHome, onBackToShop }: C
                     Telephone Assistance
                   </h3>
                   <p className="font-sans text-[11px] text-neutral-400 font-light">
-                    +33 (0) 1 40 20 50 50
+                    +33 (0) 1 80 05 90 00
                   </p>
                   <span className="inline-block font-sans text-[9px] text-neutral-500 tracking-wider font-semibold uppercase pt-1">
                     Mon–Fri, 9:00 AM – 6:00 PM CET
@@ -191,19 +191,19 @@ export default function ContactPage({ goldStyle, onBackToHome, onBackToShop }: C
             <span className="block font-sans text-[9px] tracking-[0.25em] uppercase text-neutral-500 font-semibold">
               Connect Globally
             </span>
-            <div className="flex items-center gap-2.5">
+            <div className="flex flex-wrap items-center gap-2">
               {[
-                { name: 'Instagram', href: 'https://instagram.com' },
-                { name: 'Facebook', href: 'https://facebook.com' },
-                { name: 'X', href: 'https://twitter.com' },
-                { name: 'Pinterest', href: 'https://pinterest.com' },
+                { name: 'Instagram', href: 'https://instagram.com/aurelia.couture' },
+                { name: 'Facebook', href: 'https://facebook.com/aurelia.couture' },
+                { name: 'X', href: 'https://x.com/aurelia_couture' },
+                { name: 'Pinterest', href: 'https://pinterest.com/aurelia_couture' },
               ].map((social) => (
                 <a
                   key={social.name}
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-4 py-2 rounded border border-neutral-900 bg-neutral-950 hover:bg-white hover:text-black text-neutral-400 font-sans text-[10px] font-bold tracking-widest uppercase transition-all duration-300"
+                  className="px-3 sm:px-4 py-1.5 sm:py-2 rounded border border-neutral-900 bg-neutral-950 hover:bg-white hover:text-black text-neutral-400 font-sans text-[9px] sm:text-[10px] font-bold tracking-widest uppercase transition-all duration-300"
                 >
                   {social.name}
                 </a>
@@ -257,7 +257,7 @@ export default function ContactPage({ goldStyle, onBackToHome, onBackToShop }: C
                     <input
                       type="email"
                       required
-                      placeholder="e.g. j.laurent@luxury.com"
+                      placeholder="e.g. julia.laurent@aureliaclient.com"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className={`w-full bg-black/60 border ${getGoldBorder()} rounded-md px-4 py-3 font-sans text-xs text-white placeholder-neutral-600 focus:outline-none focus:ring-1 focus:ring-opacity-40 transition-all duration-300`}

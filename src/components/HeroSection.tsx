@@ -52,7 +52,7 @@ export default function HeroSection({ goldStyle, onShopClick, onExploreClick }: 
   return (
     <section
       id="aurelia-hero-section"
-      className="relative w-full h-[calc(100vh-100px)] min-h-[650px] lg:h-[calc(100vh-76px)] flex items-stretch overflow-hidden bg-[#050505] text-white"
+      className="relative w-full h-auto min-h-[650px] lg:h-[calc(100vh-76px)] flex items-stretch overflow-hidden bg-[#050505] text-white"
     >
       {/* Absolute Decorative Background Elements */}
       
@@ -139,7 +139,7 @@ export default function HeroSection({ goldStyle, onShopClick, onExploreClick }: 
         </div>
 
         {/* RIGHT COLUMN: Premium Fashion Editorial Image with Scroll Parallax */}
-        <div className="lg:col-span-6 relative overflow-hidden bg-neutral-950 flex items-stretch">
+        <div className="lg:col-span-6 relative overflow-hidden bg-neutral-950 flex items-stretch h-[350px] sm:h-[450px] lg:h-auto">
           
           {/* Main Visual Image Wrapper for Parallax effect */}
           <div

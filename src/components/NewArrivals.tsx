@@ -22,7 +22,7 @@ interface NewArrivalsProps {
   onProductClick?: (product: any) => void;
 }
 
-const NEW_ARRIVALS_PRODUCTS: NewArrivalProduct[] = [
+export const NEW_ARRIVALS_PRODUCTS: NewArrivalProduct[] = [
   {
     id: 'new-1',
     name: 'Aurelia Ribbed Cashmere Knit',

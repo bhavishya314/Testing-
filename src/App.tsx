@@ -3,9 +3,9 @@ import { NavbarTheme, GoldStyle, LogoAlign, HighlightStyle, CartItem, WishlistIt
 import AnnouncementBar from './components/AnnouncementBar';
 import LuxuryNavbar from './components/LuxuryNavbar';
 import HeroSection from './components/HeroSection';
-import FeaturedProducts from './components/FeaturedProducts';
+import FeaturedProducts, { PRODUCTS } from './components/FeaturedProducts';
 import ShopByCategory from './components/ShopByCategory';
-import NewArrivals from './components/NewArrivals';
+import NewArrivals, { NEW_ARRIVALS_PRODUCTS } from './components/NewArrivals';
 import WhyShopWithUs from './components/WhyShopWithUs';
 import CustomerReviews from './components/CustomerReviews';
 import InstagramGallery from './components/InstagramGallery';
@@ -20,6 +20,7 @@ import ProductDetails from './components/ProductDetails';
 import CartPage from './components/CartPage';
 import WishlistPage from './components/WishlistPage';
 import ContactPage from './components/ContactPage';
+import PolicyModal from './components/PolicyModal';
 
 const LUXURY_CATALOG = [
   { id: 'item-1', name: 'Maison Silk Slip Dress', price: 890, image: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=300&auto=format&fit=crop', inStock: true },
@@ -41,6 +42,15 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState<'home' | 'shop' | 'details' | 'cart' | 'wishlist' | 'contact'>('home');
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+
+  // Policy Modal States
+  const [isPolicyOpen, setIsPolicyOpen] = useState(false);
+  const [policyType, setPolicyType] = useState<'privacy' | 'terms' | 'returns'>('privacy');
+
+  const handleOpenPolicy = (type: 'privacy' | 'terms' | 'returns') => {
+    setPolicyType(type);
+    setIsPolicyOpen(true);
+  };
 
   // Keep track of scroll positions for each page
   const scrollPositionsRef = useRef<Record<string, number>>({});
@@ -64,6 +74,101 @@ export default function App() {
     }
   }, []);
 
+  const resolveFullProduct = (p: any): Product => {
+    if (!p) return SHOP_PRODUCTS[0];
+    
+    // Try to find the product in SHOP_PRODUCTS
+    let found = SHOP_PRODUCTS.find((x) => x.id === p.id || x.name.toLowerCase() === p.name.toLowerCase());
+    if (found) return found;
+
+    // Try to find in Featured PRODUCTS
+    const featuredFound = PRODUCTS.find((x) => x.id === p.id || x.name.toLowerCase() === p.name.toLowerCase());
+    if (featuredFound) {
+      let badgeMapped: 'NEW' | 'SALE' | 'LIMITED' | 'BESTSELLER' | undefined = undefined;
+      if (featuredFound.badge === 'NEW') badgeMapped = 'NEW';
+      else if (featuredFound.badge === 'LIMITED') badgeMapped = 'LIMITED';
+      else if (featuredFound.badge === 'BEST SELLER') badgeMapped = 'BESTSELLER';
+
+      let typeMapped: Product['type'] = 'Dress';
+      const nameLower = featuredFound.name.toLowerCase();
+      if (nameLower.includes('overcoat') || nameLower.includes('trench')) typeMapped = 'Overcoat';
+      else if (nameLower.includes('blazer')) typeMapped = 'Blazer';
+      else if (nameLower.includes('boots')) typeMapped = 'Boots';
+      else if (nameLower.includes('ring')) typeMapped = 'Ring';
+      else if (nameLower.includes('scarf')) typeMapped = 'Scarf';
+      else if (nameLower.includes('gown')) typeMapped = 'Gown';
+      else if (nameLower.includes('jacket')) typeMapped = 'Jacket';
+
+      return {
+        id: featuredFound.id,
+        name: featuredFound.name,
+        category: featuredFound.category,
+        price: featuredFound.price,
+        originalPrice: featuredFound.originalPrice,
+        badge: badgeMapped,
+        image: featuredFound.image,
+        rating: featuredFound.rating,
+        reviews: featuredFound.reviews,
+        description: featuredFound.description,
+        sizes: featuredFound.sizes,
+        details: featuredFound.details,
+        gender: 'Unisex',
+        type: typeMapped
+      };
+    }
+
+    // Try to find in NEW_ARRIVALS_PRODUCTS
+    const newArrivalFound = NEW_ARRIVALS_PRODUCTS.find((x) => x.id === p.id || x.name.toLowerCase() === p.name.toLowerCase());
+    if (newArrivalFound) {
+      let typeMapped: Product['type'] = 'Dress';
+      const nameLower = newArrivalFound.name.toLowerCase();
+      if (nameLower.includes('knit') || nameLower.includes('sweater') || nameLower.includes('hoodie')) typeMapped = 'Hoodie';
+      else if (nameLower.includes('trouser') || nameLower.includes('pant')) typeMapped = 'Trouser';
+      else if (nameLower.includes('poncho') || nameLower.includes('overcoat')) typeMapped = 'Overcoat';
+      else if (nameLower.includes('jacket')) typeMapped = 'Jacket';
+      else if (nameLower.includes('belt') || nameLower.includes('glove') || nameLower.includes('bag')) typeMapped = 'Bag';
+      else if (nameLower.includes('bracelet')) typeMapped = 'Ring';
+
+      return {
+        id: newArrivalFound.id,
+        name: newArrivalFound.name,
+        category: newArrivalFound.category,
+        price: newArrivalFound.price,
+        originalPrice: newArrivalFound.originalPrice,
+        image: newArrivalFound.image,
+        rating: newArrivalFound.rating,
+        reviews: 15,
+        description: 'An exquisite piece from our latest seasonal arrival collection.',
+        sizes: ['S', 'M', 'L'],
+        details: ['Premium Cashmere Blend', 'Handmade craftsmanship', 'Atelier Couture Details'],
+        gender: 'Unisex',
+        type: typeMapped
+      };
+    }
+
+    // Return the product itself mapped to Product structure if not found elsewhere
+    let typeMapped: Product['type'] = 'Dress';
+    if (p.type) {
+      typeMapped = p.type as Product['type'];
+    }
+
+    return {
+      id: p.id,
+      name: p.name,
+      category: p.category || 'Luxury Collection',
+      price: p.price,
+      originalPrice: p.originalPrice,
+      image: p.image,
+      rating: p.rating || 5,
+      reviews: p.reviews || 20,
+      description: p.description || 'An exquisite masterwork of fine tailoring and handcrafted styling from Aurelia.',
+      sizes: p.sizes || ['XS', 'S', 'M', 'L', 'XL'],
+      details: p.details || ['100% Organic Materials', 'Premium Craftsmanship', 'Exclusive Limited Edition', 'Handcrafted in France'],
+      gender: p.gender || 'Unisex',
+      type: typeMapped
+    };
+  };
+
   // Handle navigation from internal items or navbar
   const handleNavigate = (
     page: 'home' | 'shop' | 'details' | 'cart' | 'wishlist' | 'contact',
@@ -80,7 +185,8 @@ export default function App() {
     setSelectedCategory(category || null);
     
     if (product) {
-      setSelectedProduct(product);
+      const resolved = resolveFullProduct(product);
+      setSelectedProduct(resolved);
     } else if (page !== 'details' && page !== 'cart' && page !== 'wishlist') {
       setSelectedProduct(null);
     }
@@ -338,7 +444,7 @@ export default function App() {
           <CustomerReviews goldStyle={goldStyle} />
 
           {/* Premium Newsletter Section */}
-          <Newsletter goldStyle={goldStyle} />
+          <Newsletter goldStyle={goldStyle} onOpenPolicy={handleOpenPolicy} />
         </>
       ) : currentPage === 'shop' ? (
         <ShopPage
@@ -400,7 +506,7 @@ export default function App() {
       )}
 
       {/* Premium Footer Section */}
-      <Footer goldStyle={goldStyle} onNavigate={handleNavigate} />
+      <Footer goldStyle={goldStyle} onNavigate={handleNavigate} onOpenPolicy={handleOpenPolicy} />
 
 
 
@@ -442,6 +548,13 @@ export default function App() {
           const fullProd = SHOP_PRODUCTS.find((x) => x.id === p.id || x.name === p.name) || p;
           handleNavigate('details', null, fullProd);
         }}
+      />
+
+      <PolicyModal
+        isOpen={isPolicyOpen}
+        onClose={() => setIsPolicyOpen(false)}
+        initialType={policyType}
+        goldStyle={goldStyle}
       />
     </div>
   );

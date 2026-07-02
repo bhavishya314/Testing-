@@ -119,7 +119,7 @@ export default function InstagramGallery({ goldStyle }: InstagramGalleryProps) {
           <div className="shrink-0">
             <a
               id="instagram-follow-btn"
-              href="https://instagram.com"
+              href="https://instagram.com/aurelia.couture"
               target="_blank"
               rel="noopener noreferrer"
               className={`inline-flex items-center gap-2.5 px-7 py-3.5 rounded-sm font-sans font-bold text-xs tracking-[0.2em] uppercase transition-all duration-300 transform active:scale-98 shadow-lg ${getGoldBg()} ${getButtonGlow()}`}
@@ -138,7 +138,7 @@ export default function InstagramGallery({ goldStyle }: InstagramGalleryProps) {
               <motion.a
                 id={`instagram-post-${post.id}`}
                 key={post.id}
-                href="https://instagram.com"
+                href="https://instagram.com/aurelia.couture"
                 target="_blank"
                 rel="noopener noreferrer"
                 initial={{ opacity: 0, y: 25 }}
