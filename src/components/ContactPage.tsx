@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Phone, MapPin, Send, MessageCircle, Sparkles, ArrowLeft, CheckCircle2, Globe } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageCircle, ArrowLeft, CheckCircle2, Globe } from 'lucide-react';
 import { GoldStyle } from '../types';
 
 interface ContactPageProps {
@@ -73,10 +73,6 @@ export default function ContactPage({ goldStyle, onBackToHome, onBackToShop }: C
           <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           <span>Back to Home</span>
         </button>
-        <span className={`font-serif text-[10px] tracking-[0.3em] uppercase ${getGoldColor()} flex items-center gap-1.5`}>
-          <Sparkles className="w-3.5 h-3.5" />
-          Maison Concierge
-        </span>
       </div>
 
       {/* Main Grid: Contact Channels & Form */}
@@ -86,7 +82,7 @@ export default function ContactPage({ goldStyle, onBackToHome, onBackToShop }: C
         <div className="lg:col-span-5 space-y-10">
           <div className="space-y-4">
             <h1 className="font-serif text-4xl md:text-5xl font-bold tracking-tight text-white leading-tight">
-              L'Atelier <span className={getGoldColor()}>Concierge</span>
+              Customer <span className={getGoldColor()}>Support</span>
             </h1>
             <p className="font-sans text-xs md:text-sm text-neutral-400 font-light leading-relaxed">
               Our private client specialists are available globally to assist you with bespoke fitting requests, product inquiries, order tracking, and custom design consultation.

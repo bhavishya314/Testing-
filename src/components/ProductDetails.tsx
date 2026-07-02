@@ -41,23 +41,11 @@ export default function ProductDetails({
 
   const [selectedColor, setSelectedColor] = useState<string>(colors[0] || 'Black');
   
+  // The gallery must ONLY use the current product's default image/gallery.
+  // It is completely decoupled from color selection.
   const galleryImages = useMemo(() => {
-    const variants = PRODUCT_VARIANTS[product.id];
-    const defaultGallery = (variants && variants.length > 0 && variants[0].images && variants[0].images.length > 0)
-      ? variants[0].images
-      : [product.image];
-
-    if (!variants) {
-      return defaultGallery;
-    }
-
-    const currentVariant = variants.find(v => v.color === selectedColor);
-    if (currentVariant && currentVariant.images && currentVariant.images.length > 0) {
-      return currentVariant.images;
-    }
-
-    return defaultGallery;
-  }, [product, selectedColor]);
+    return [product.image];
+  }, [product.id, product.image]);
 
   const selectedVariant = useMemo(() => {
     const variants = PRODUCT_VARIANTS[product.id];
@@ -71,14 +59,14 @@ export default function ProductDetails({
   const [imageOpacity, setImageOpacity] = useState<number>(1);
   const [selectedSize, setSelectedSize] = useState<string>(product.sizes[0] || 'M');
   
-  // Sync activeImage whenever galleryImages changes (due to product or color selection)
+  // Sync activeImage whenever galleryImages changes (due to product changes only)
   React.useEffect(() => {
     if (galleryImages && galleryImages.length > 0) {
       setActiveImage(galleryImages[0]);
     }
   }, [galleryImages]);
 
-  // Pre-preload all images in galleryImages to prevent thumbnail click flickering
+  // Pre-preload all images in galleryImages
   React.useEffect(() => {
     if (galleryImages && galleryImages.length > 0) {
       galleryImages.forEach((imgUrl) => {
@@ -138,14 +126,23 @@ export default function ProductDetails({
 
   // Update active image when product changes
   React.useEffect(() => {
+    const productVariants = PRODUCT_VARIANTS[product.id];
+    const availableColors = (productVariants && productVariants.length > 0)
+      ? productVariants.map(v => v.color)
+      : (PRODUCT_COLORS[product.id] || ['Black', 'White', 'Gold']);
+    
+    const defaultColor = availableColors[0] || 'Black';
+
+    setSelectedColor(defaultColor);
     setDisplayedImage(product.image);
     setActiveImage(product.image);
     setImageOpacity(1);
     setSelectedSize(product.sizes[0] || 'M');
-    setSelectedColor(colors[0] || 'Black');
     setQuantity(1);
+    setZoomStyle({ display: 'none' });
+    
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [product, colors]);
+  }, [product.id, product.image]);
 
   const getGoldColor = () => {
     if (goldStyle === 'champagne') return 'text-[#dfba73]';

@@ -193,9 +193,6 @@ export default function LuxuryNavbar({
                   className={`font-serif tracking-[0.25em] text-2xl font-bold transition-all duration-300 flex flex-col justify-center select-none ${getGoldColor()}`}
                 >
                   <span>AURELIA</span>
-                  <span className="font-sans text-[6px] tracking-[0.55em] text-neutral-400 font-light mt-0.5 uppercase text-center">
-                    Maison d'Élégance
-                  </span>
                 </a>
 
                 {/* Navigation Menu Links */}
@@ -404,9 +401,6 @@ export default function LuxuryNavbar({
                   className={`font-serif tracking-[0.25em] text-2xl font-bold transition-all duration-300 flex flex-col justify-center select-none ${getGoldColor()}`}
                 >
                   <span>AURELIA</span>
-                  <span className="font-sans text-[6px] tracking-[0.55em] text-neutral-400 font-light mt-0.5 uppercase text-center">
-                    Maison d'Élégance
-                  </span>
                 </a>
               </div>
             )}
